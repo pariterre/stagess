@@ -8,7 +8,9 @@ import 'package:stagess/router.dart';
 import 'package:stagess/screens/internship_forms/enterprise_steps/enterprise_evaluation_screen.dart';
 import 'package:stagess/screens/student/pages/widgets/internship_details.dart';
 import 'package:stagess/screens/student/pages/widgets/internship_evaluation_attitude.dart';
+import 'package:stagess/screens/student/pages/widgets/internship_evaluation_post.dart';
 import 'package:stagess/screens/student/pages/widgets/internship_evaluation_skill.dart';
+import 'package:stagess/screens/student/pages/widgets/internship_evaluation_sst.dart';
 import 'package:stagess/screens/student/pages/widgets/internship_visa.dart';
 import 'package:stagess_common/models/enterprises/enterprise.dart';
 import 'package:stagess_common/models/internships/internship.dart';
@@ -288,17 +290,26 @@ class _StudentInternshipListViewState
                     ),
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InternshipDetails(
-                      key: detailKeys[internship.id],
-                      internshipId: internship.id,
-                    ),
-                    EvaluationSkill(internshipId: internship.id),
-                    EvaluationAttitude(internshipId: internship.id),
-                    InternshipVisa(internshipId: internship.id),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InternshipDetails(
+                          key: detailKeys[internship.id],
+                          internshipId: internship.id),
+                      Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
+                      EvaluationSst(internshipId: internship.id),
+                      Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
+                      EvaluationSkill(internshipId: internship.id),
+                      Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
+                      EvaluationAttitude(internshipId: internship.id),
+                      Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
+                      EvaluationPost(internshipId: internship.id),
+                      Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
+                      InternshipVisa(internshipId: internship.id),
+                    ],
+                  ),
                 ),
               );
             }),

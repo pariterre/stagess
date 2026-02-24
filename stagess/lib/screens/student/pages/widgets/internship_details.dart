@@ -277,47 +277,44 @@ class InternshipDetailsState extends State<InternshipDetails> {
     if (teacherId == null) {
       return const Center(child: Text('Vous n\'êtes pas connecté.'));
     }
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: AnimatedExpandingCard(
-        elevation: 0,
-        tappingPermitted: (isExpanded) async {
-          if (_editMode) {
-            if (await preventClosingIfEditing()) return false;
-          }
-          return true;
-        },
-        initialExpandedState: false,
-        header: (context, isExpanded) => Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Détails du contrat de stage',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium!.copyWith(color: Colors.black),
-            ),
-            if (isExpanded &&
-                _internship.isActive &&
-                _internship.supervisingTeacherIds.contains(teacherId))
-              IconButton(
-                onPressed: _forceDisabled ? null : _toggleEditMode,
-                icon: Icon(
-                  editMode ? Icons.save : Icons.edit,
-                  color: _forceDisabled
-                      ? Colors.grey
-                      : Theme.of(context).primaryColor,
-                ),
+    return AnimatedExpandingCard(
+      elevation: 0,
+      tappingPermitted: (isExpanded) async {
+        if (_editMode) {
+          if (await preventClosingIfEditing()) return false;
+        }
+        return true;
+      },
+      initialExpandedState: false,
+      header: (context, isExpanded) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Détails du contrat de stage',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium!.copyWith(color: Colors.black),
+          ),
+          if (isExpanded &&
+              _internship.isActive &&
+              _internship.supervisingTeacherIds.contains(teacherId))
+            IconButton(
+              onPressed: _forceDisabled ? null : _toggleEditMode,
+              icon: Icon(
+                editMode ? Icons.save : Icons.edit,
+                color: _forceDisabled
+                    ? Colors.grey
+                    : Theme.of(context).primaryColor,
               ),
-          ],
-        ),
-        child: _InternshipBody(
-          internship: _internship,
-          editMode: _editMode,
-          onSave: _toggleEditMode,
-          onRequestChangedDates: _promptDateRange,
-          internshipController: _internshipController,
-        ),
+            ),
+        ],
+      ),
+      child: _InternshipBody(
+        internship: _internship,
+        editMode: _editMode,
+        onSave: _toggleEditMode,
+        onRequestChangedDates: _promptDateRange,
+        internshipController: _internshipController,
       ),
     );
   }
@@ -357,7 +354,7 @@ class _InternshipBody extends StatelessWidget {
         const SizedBox(height: 12),
         const Text('Signataire du contrat de stage\u00a0:', style: _titleStyle),
         Padding(
-          padding: const EdgeInsets.only(top: 2, bottom: _interline),
+          padding: const EdgeInsets.only(top: 2),
           child: Text(signatoryTeacher),
         ),
       ],

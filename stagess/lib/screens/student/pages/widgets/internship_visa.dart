@@ -165,37 +165,34 @@ class _InternshipVisaState extends State<InternshipVisa> {
 
     _resetIndex();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: AnimatedExpandingCard(
-        elevation: 0.0,
-        header: (ctx, isExpanded) => Text(
-          'VISA',
-          style: Theme.of(context)
-              .textTheme
-              .titleMedium!
-              .copyWith(color: Colors.black),
-        ),
-        child: Column(
-          children: [
-            if (_evaluations.isEmpty)
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0, bottom: 4.0),
-                child: Text('Aucune évaluation disponible pour ce stage.'),
-              ),
-            if (_evaluations.isNotEmpty)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLastEvaluation(),
-                  _buildAttitudeIsGood(),
-                  _buildAttitudeIsBad(),
-                  _buildGeneralAppreciation(),
-                  _buildShowOtherForms(),
-                ],
-              ),
-          ],
-        ),
+    return AnimatedExpandingCard(
+      elevation: 0.0,
+      header: (ctx, isExpanded) => Text(
+        'VISA',
+        style: Theme.of(context)
+            .textTheme
+            .titleMedium!
+            .copyWith(color: Colors.black),
+      ),
+      child: Column(
+        children: [
+          if (_evaluations.isEmpty)
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 4.0),
+              child: Text('Aucune évaluation disponible pour ce stage.'),
+            ),
+          if (_evaluations.isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildLastEvaluation(),
+                _buildAttitudeIsGood(),
+                _buildAttitudeIsBad(),
+                _buildGeneralAppreciation(),
+                _buildShowOtherForms(),
+              ],
+            ),
+        ],
       ),
     );
   }
