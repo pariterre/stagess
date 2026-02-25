@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stagess/common/widgets/dialogs/show_pdf_dialog.dart';
 import 'package:stagess/common/widgets/form_fields/text_with_form.dart';
 import 'package:stagess/common/widgets/itemized_text.dart';
 import 'package:stagess/common/widgets/sub_title.dart';
 import 'package:stagess/misc/question_file_service.dart';
+import 'package:stagess/screens/student/pages/pdf/sst_pdf_template.dart';
 import 'package:stagess_common/models/generic/fetchable_fields.dart';
 import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/internships/sst_evaluation.dart';
@@ -134,6 +136,19 @@ class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
         [],
   );
 
+  Internship get _editedInternship {
+    final internships = InternshipsProvider.of(context, listen: false);
+
+    final internship = Internship.fromSerialized(
+        internships.fromId(widget.internshipId).serialize());
+    internship.sstEvaluation ??= SstEvaluation.empty;
+
+    internship.sstEvaluation!.update(
+        presentAtEvaluation: wereAtMeetingController.values,
+        questions: _questionsKey.currentState!.answer);
+    return internship;
+  }
+
   void _submit() {
     _logger.info(
         'Submitting SstEvaluationFormScreen for internshipId: ${widget.internshipId}');
@@ -145,13 +160,7 @@ class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
 
     _questionsKey.currentState!.formKey.currentState!.save();
 
-    final internships = InternshipsProvider.of(context, listen: false);
-    final internship = internships.fromId(widget.internshipId);
-
-    internship.sstEvaluation ??= SstEvaluation.empty;
-    internship.sstEvaluation!.update(
-        presentAtEvaluation: wereAtMeetingController.values,
-        questions: _questionsKey.currentState!.answer);
+    final internship = _editedInternship;
 
     _logger.fine(
       'SstEvaluationFormScreen submitted successfully for internshipId: ${widget.internshipId}',
@@ -254,16 +263,6 @@ class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
                     '15 minutes',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Cibles',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  ItemizedText(const [
-                    'Nouvelle entreprise : remplissage initial',
-                    'Milieu de stage récurrent : validation et mise à jour des '
-                        'réponses des années précédentes',
-                  ], style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             ),
@@ -313,21 +312,23 @@ class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
           ],
         ),
         body: PopScope(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _QuestionsStep(
-                      key: _questionsKey,
-                      initialSstEvaluation: internship.sstEvaluation,
-                      wereAtMeetingController: wereAtMeetingController,
-                      enterpriseId: internship.enterpriseId,
-                      jobId: internship.jobId),
-                  _controlBuilder(),
-                ],
-              ),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: _QuestionsStep(
+                        key: _questionsKey,
+                        initialSstEvaluation: internship.sstEvaluation,
+                        wereAtMeetingController: wereAtMeetingController,
+                        enterpriseId: internship.enterpriseId,
+                        jobId: internship.jobId),
+                  ),
+                ),
+                _controlBuilder(),
+              ],
             ),
           ),
         ),
@@ -343,7 +344,20 @@ class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
         children: [
           OutlinedButton(onPressed: _cancel, child: const Text('Annuler')),
           const SizedBox(width: 20),
-          TextButton(onPressed: _submit, child: const Text('Confirmer')),
+          TextButton(onPressed: _submit, child: const Text('Enregistrer')),
+          IconButton(
+              onPressed: () {
+                showPdfDialog(
+                  context,
+                  pdfGeneratorCallback: (context, format) => generateSstPdf(
+                      context, format,
+                      internship: _editedInternship),
+                );
+              },
+              icon: Icon(
+                Icons.picture_as_pdf,
+                color: Theme.of(context).colorScheme.primary,
+              ))
         ],
       ),
     );
@@ -391,7 +405,7 @@ class _QuestionsStepState extends State<_QuestionsStep> {
         .fromId(widget.enterpriseId);
     final job = enterprise.jobs.fromId(widget.jobId);
 
-    // // Sort the question by "id"
+    // Sort the question by "id"
     final questionIds = [...job.specialization.questions]
       ..sort((a, b) => int.parse(a) - int.parse(b));
     final questions =
