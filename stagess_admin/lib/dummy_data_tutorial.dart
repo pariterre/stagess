@@ -2199,7 +2199,7 @@ Future<void> _addDummyInternships(
     transportations: [Transportation.none],
     visitFrequencies: 'Une visite par mois',
   );
-  internship.enterpriseEvaluation = PostInternshipEnterpriseEvaluation(
+  internship.enterpriseEvaluations.add(PostInternshipEnterpriseEvaluation(
     internshipId: internship.id,
     date: period.end.add(Duration(days: 5)),
     skillsRequired: ['Communiquer à l\'écrit', 'Interagir avec des clients'],
@@ -2217,7 +2217,7 @@ Future<void> _addDummyInternships(
     acceptancePhysicalDisability: 4,
     acceptanceMentalHealthDisorder: 2,
     acceptanceBehaviorDifficulties: 2,
-  );
+  ));
   internships.add(internship);
 
   startingPeriod = DateTime.now().subtract(Duration(days: 10));

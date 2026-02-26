@@ -195,8 +195,8 @@ void main() {
       expect(internshipSame.sstEvaluations.length,
           internship.sstEvaluations.length);
       expect(
-        internshipSame.enterpriseEvaluation!.id,
-        internship.enterpriseEvaluation!.id,
+        internshipSame.enterpriseEvaluations.length,
+        internship.enterpriseEvaluations.length,
       );
 
       final internshipDifferent = internship.copyWith(
@@ -223,9 +223,12 @@ void main() {
           dummySstEvaluation(id: 'newSstEvaluationId'),
           dummySstEvaluation(id: 'newSstEvaluationId2'),
         ],
-        enterpriseEvaluation: dummyPostInternshipEnterpriseEvaluation(
-          id: 'newEnterpriseEvaluationId',
-        ),
+        enterpriseEvaluations: [
+          dummyPostInternshipEnterpriseEvaluation(
+              id: 'newEnterpriseEvaluationId'),
+          dummyPostInternshipEnterpriseEvaluation(
+              id: 'newEnterpriseEvaluationId2'),
+        ],
       );
 
       expect(internshipDifferent.id, 'newId');
@@ -261,10 +264,10 @@ void main() {
       );
       expect(internshipDifferent.sstEvaluations[0].id, 'newSstEvaluationId');
       expect(internshipDifferent.sstEvaluations[1].id, 'newSstEvaluationId2');
-      expect(
-        internshipDifferent.enterpriseEvaluation!.id,
-        'newEnterpriseEvaluationId',
-      );
+      expect(internshipDifferent.enterpriseEvaluations[0].id,
+          'newEnterpriseEvaluationId');
+      expect(internshipDifferent.enterpriseEvaluations[1].id,
+          'newEnterpriseEvaluationId2');
     });
 
     test('"Internship" serialization and deserialization works', () {
@@ -308,8 +311,9 @@ void main() {
           dummyInternshipEvaluationAttitude().serialize(),
         ],
         'sst_evaluations': [dummySstEvaluation().serialize()],
-        'enterprise_evaluation':
-            dummyPostInternshipEnterpriseEvaluation().serialize(),
+        'enterprise_evaluations': [
+          dummyPostInternshipEnterpriseEvaluation().serialize()
+        ],
         'visa_evaluations': [dummyInternshipVisaEvaluation().serialize()],
       };
       expect(serialized, expected);
@@ -355,8 +359,8 @@ void main() {
       expect(
           deserialized.sstEvaluations[0].id, internship.sstEvaluations[0].id);
       expect(
-        deserialized.enterpriseEvaluation!.id,
-        internship.enterpriseEvaluation!.id,
+        deserialized.enterpriseEvaluations[0].id,
+        internship.enterpriseEvaluations[0].id,
       );
       expect(
         deserialized.visaEvaluations[0].id,
@@ -379,7 +383,7 @@ void main() {
       expect(emptyDeserialized.skillEvaluations.length, 0);
       expect(emptyDeserialized.attitudeEvaluations.length, 0);
       expect(emptyDeserialized.sstEvaluations[0].id, isNotNull);
-      expect(emptyDeserialized.enterpriseEvaluation, isNull);
+      expect(emptyDeserialized.enterpriseEvaluations.length, 0);
       expect(emptyDeserialized.visaEvaluations.length, 0);
 
       expect(() => emptyDeserialized.dates, throwsStateError);

@@ -354,8 +354,9 @@ Internship dummyInternship({
     endDate: hasEndDate ? DateTime(2034, 10, 28) : DateTime(0),
     expectedDuration: 135,
     achievedDuration: achievedLength,
-    enterpriseEvaluation:
-        dummyPostInternshipEnterpriseEvaluation(internshipId: id),
+    enterpriseEvaluations: [
+      dummyPostInternshipEnterpriseEvaluation(internshipId: id)
+    ],
     sstEvaluations: [dummySstEvaluation(id: id)],
     weeklySchedules: [dummyWeeklySchedule(period: period)],
     skillEvaluations: [dummyInternshipEvaluationSkill()],

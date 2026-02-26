@@ -8,7 +8,7 @@ import 'package:stagess/common/provider_helpers/students_helpers.dart';
 import 'package:stagess/common/widgets/main_drawer.dart';
 import 'package:stagess/common/widgets/sub_title.dart';
 import 'package:stagess/router.dart';
-import 'package:stagess/screens/internship_forms/enterprise_steps/enterprise_evaluation_screen.dart';
+import 'package:stagess/screens/internship_forms/student_steps/enterprise_evaluation_form_dialog.dart';
 import 'package:stagess/screens/internship_forms/student_steps/sst_evaluation_form_screen.dart';
 import 'package:stagess_common/models/enterprises/enterprise.dart';
 import 'package:stagess_common/models/internships/internship.dart';
@@ -314,7 +314,7 @@ class _PostInternshipEvaluation extends StatelessWidget {
                   iconColor: Colors.blueGrey,
                   date: internship.endDate,
                   buttonTitle: 'Évaluer l\'entreprise',
-                  onTap: () => showEnterpriseEvaluationDialog(
+                  onTap: () => showEnterpriseEvaluationFormDialog(
                     context,
                     internshipId: internship.id,
                   ),

@@ -52,9 +52,9 @@ class TaskAndAbilityStepState extends State<TaskAndAbilityStep> {
   final _formKey = GlobalKey<FormState>();
 
   // Tasks
-  late var _taskVariety = widget.internship.enterpriseEvaluation == null
+  late var _taskVariety = widget.internship.enterpriseEvaluations.isEmpty
       ? _TaskVariety.none
-      : (widget.internship.enterpriseEvaluation?.taskVariety == 0
+      : (widget.internship.enterpriseEvaluations.last.taskVariety == 0
           ? _TaskVariety.low
           : _TaskVariety.high);
   double? get taskVariety => _taskVariety == _TaskVariety.none
@@ -63,9 +63,9 @@ class TaskAndAbilityStepState extends State<TaskAndAbilityStep> {
           ? 0.0
           : 1.0;
 
-  late var _trainingPlan = widget.internship.enterpriseEvaluation == null
+  late var _trainingPlan = widget.internship.enterpriseEvaluations.isEmpty
       ? _TrainingPlan.none
-      : (widget.internship.enterpriseEvaluation?.trainingPlanRespect == 0
+      : (widget.internship.enterpriseEvaluations.last.trainingPlanRespect == 0
           ? _TrainingPlan.notFilled
           : _TrainingPlan.filled);
   double? get trainingPlan => _trainingPlan == _TrainingPlan.none
@@ -77,7 +77,7 @@ class TaskAndAbilityStepState extends State<TaskAndAbilityStep> {
   late final _skillController = CheckboxWithOtherController(
       elements: _RequiredSkills.values,
       initialValues: [
-        ...?widget.internship.enterpriseEvaluation?.skillsRequired
+        ...?widget.internship.enterpriseEvaluations.lastOrNull?.skillsRequired
       ]);
   List<String> get requiredSkills => _skillController.values;
 

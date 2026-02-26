@@ -22,11 +22,13 @@ void main() {
       final job = dummyJob();
 
       // No evaluation yet
-      expect(job.postInternshipEnterpriseEvaluations(context).length, 0);
+      expect(
+          job.mostRecentPostInternshipEnterpriseEvaluations(context).length, 0);
 
       // Add an evaluation
       InternshipsProvider.of(context, listen: false).add(dummyInternship());
-      expect(job.postInternshipEnterpriseEvaluations(context).length, 1);
+      expect(
+          job.mostRecentPostInternshipEnterpriseEvaluations(context).length, 1);
     });
 
     test('"copyWith" behaves properly', () {

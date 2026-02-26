@@ -50,7 +50,7 @@ class SpecializedStudentsStepState extends State<SpecializedStudentsStep> {
     initialValues: [
       ..._Disabilities.values
           .map((e) {
-            final eval = widget.internship.enterpriseEvaluation;
+            final eval = widget.internship.enterpriseEvaluations.lastOrNull;
             if (eval == null) return null;
             return switch (e) {
               _Disabilities.autismSpectrumDisorder => eval.acceptanceTsa != -1,
@@ -74,50 +74,51 @@ class SpecializedStudentsStepState extends State<SpecializedStudentsStep> {
   );
 
   late bool _hasStudentHadDisabilities =
-      widget.internship.enterpriseEvaluation?.hasDisorder ?? false;
+      widget.internship.enterpriseEvaluations.lastOrNull?.hasDisorder ?? false;
   List<_Disabilities> _disabilities = [];
 
   late double _acceptanceTsa =
-      widget.internship.enterpriseEvaluation?.acceptanceTsa ?? -1;
+      widget.internship.enterpriseEvaluations.lastOrNull?.acceptanceTsa ?? -1;
   double get acceptanceTsa =>
       _disabilities.contains(_Disabilities.autismSpectrumDisorder)
           ? _acceptanceTsa
           : -1;
 
-  late double _acceptanceLanguageDisorder =
-      widget.internship.enterpriseEvaluation?.acceptanceLanguageDisorder ?? -1;
+  late double _acceptanceLanguageDisorder = widget.internship
+          .enterpriseEvaluations.lastOrNull?.acceptanceLanguageDisorder ??
+      -1;
   double get acceptanceLanguageDisorder =>
       _disabilities.contains(_Disabilities.languageDisorder)
           ? _acceptanceLanguageDisorder
           : -1;
 
-  late double _acceptanceIntellectualDisability = widget
-          .internship.enterpriseEvaluation?.acceptanceIntellectualDisability ??
+  late double _acceptanceIntellectualDisability = widget.internship
+          .enterpriseEvaluations.lastOrNull?.acceptanceIntellectualDisability ??
       -1;
   double get acceptanceIntellectualDisability =>
       _disabilities.contains(_Disabilities.intellectualDisability)
           ? _acceptanceIntellectualDisability
           : -1;
 
-  late double _acceptancePhysicalDisability =
-      widget.internship.enterpriseEvaluation?.acceptancePhysicalDisability ??
-          -1;
+  late double _acceptancePhysicalDisability = widget.internship
+          .enterpriseEvaluations.lastOrNull?.acceptancePhysicalDisability ??
+      -1;
   double get acceptancePhysicalDisability =>
       _disabilities.contains(_Disabilities.physicalDisability)
           ? _acceptancePhysicalDisability
           : -1;
 
-  late double _acceptanceMentalHealthDisorder =
-      widget.internship.enterpriseEvaluation?.acceptanceMentalHealthDisorder ??
-          -1;
+  late double _acceptanceMentalHealthDisorder = widget.internship
+          .enterpriseEvaluations.lastOrNull?.acceptanceMentalHealthDisorder ??
+      -1;
   double get acceptanceMentalHealthDisorder =>
       _disabilities.contains(_Disabilities.mentalHealthDisorder)
           ? _acceptanceMentalHealthDisorder
           : -1;
 
-  late double _acceptanceBehaviorDifficulties =
-      widget.internship.enterpriseEvaluation?.acceptanceBehaviorDifficulties ??
-          -1;
+  late double _acceptanceBehaviorDifficulties = widget.internship
+          .enterpriseEvaluations.lastOrNull?.acceptanceBehaviorDifficulties ??
+      -1;
   double get acceptanceBehaviorDifficulties =>
       _disabilities.contains(_Disabilities.behavioralDifficulties)
           ? _acceptanceBehaviorDifficulties

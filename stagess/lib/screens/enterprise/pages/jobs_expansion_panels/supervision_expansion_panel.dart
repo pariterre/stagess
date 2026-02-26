@@ -96,7 +96,8 @@ class _SupervisionBodyState extends State<_SupervisionBody> {
   List<PostInternshipEnterpriseEvaluation> _getFilteredEvaluations() {
     final internships = InternshipsProvider.of(context);
     final students = StudentsHelpers.studentsInMyGroups(context);
-    var evaluations = widget.job.postInternshipEnterpriseEvaluations(context);
+    var evaluations =
+        widget.job.mostRecentPostInternshipEnterpriseEvaluations(context);
 
     // Only keep evaluations from the requested students
     return evaluations.where((eval) {

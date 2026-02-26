@@ -53,7 +53,9 @@ class SupervisionStepState extends State<SupervisionStep> {
 
   // Commentaires
   late final _commentsController = TextEditingController(
-      text: widget.internship.enterpriseEvaluation?.supervisionComments ?? '');
+      text: widget.internship.enterpriseEvaluations.lastOrNull
+              ?.supervisionComments ??
+          '');
   String get supervisionComments => _commentsController.text;
 
   Future<String?> validate() async {
@@ -105,8 +107,9 @@ class SupervisionStepState extends State<SupervisionStep> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: LowHighSliderFormField(
-            initialValue:
-                widget.internship.enterpriseEvaluation?.absenceAcceptance ?? 3,
+            initialValue: widget.internship.enterpriseEvaluations.lastOrNull
+                    ?.absenceAcceptance ??
+                3,
             onSaved: (value) => absenceAcceptance = value,
             lowLabel: labelAbsenceAcceptance[0],
             highLabel: labelAbsenceAcceptance[1],
@@ -127,9 +130,9 @@ class SupervisionStepState extends State<SupervisionStep> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: LowHighSliderFormField(
-            initialValue:
-                widget.internship.enterpriseEvaluation?.easeOfCommunication ??
-                    3,
+            initialValue: widget.internship.enterpriseEvaluations.lastOrNull
+                    ?.easeOfCommunication ??
+                3,
             onSaved: (value) => easeOfCommunication = value,
             lowLabel: labelEaseOfCommunication[0],
             highLabel: labelEaseOfCommunication[1],
@@ -150,8 +153,9 @@ class SupervisionStepState extends State<SupervisionStep> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: LowHighSliderFormField(
-            initialValue:
-                widget.internship.enterpriseEvaluation?.supervisionStyle ?? 3,
+            initialValue: widget.internship.enterpriseEvaluations.lastOrNull
+                    ?.supervisionStyle ??
+                3,
             onSaved: (value) => supervisionStyle = value,
             lowLabel: labelSupervisionStyle[0],
             highLabel: labelSupervisionStyle[1],
@@ -172,8 +176,9 @@ class SupervisionStepState extends State<SupervisionStep> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: LowHighSliderFormField(
-            initialValue:
-                widget.internship.enterpriseEvaluation?.efficiencyExpected ?? 3,
+            initialValue: widget.internship.enterpriseEvaluations.lastOrNull
+                    ?.efficiencyExpected ??
+                3,
             onSaved: (value) => efficiencyExpected = value,
             lowLabel: labelEfficiencyExpected[0],
             highLabel: labelEfficiencyExpected[1],
@@ -194,8 +199,9 @@ class SupervisionStepState extends State<SupervisionStep> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: LowHighSliderFormField(
-            initialValue:
-                widget.internship.enterpriseEvaluation?.autonomyExpected ?? 3,
+            initialValue: widget.internship.enterpriseEvaluations.lastOrNull
+                    ?.autonomyExpected ??
+                3,
             onSaved: (value) => autonomyExpected = value,
             lowLabel: labelAutonomyExpected[0],
             highLabel: labelAutonomyExpected[1],

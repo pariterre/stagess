@@ -5,7 +5,7 @@ import 'package:logging/logging.dart';
 import 'package:stagess/common/widgets/dialogs/finalize_internship_dialog.dart';
 import 'package:stagess/common/widgets/sub_title.dart';
 import 'package:stagess/router.dart';
-import 'package:stagess/screens/internship_forms/enterprise_steps/enterprise_evaluation_screen.dart';
+import 'package:stagess/screens/internship_forms/student_steps/enterprise_evaluation_form_dialog.dart';
 import 'package:stagess/screens/student/pages/widgets/internship_details.dart';
 import 'package:stagess/screens/student/pages/widgets/internship_evaluation_attitude.dart';
 import 'package:stagess/screens/student/pages/widgets/internship_evaluation_post.dart';
@@ -195,7 +195,8 @@ class _StudentInternshipListViewState
   }
 
   void _evaluateEnterprise(BuildContext context, Internship internship) async {
-    await showEnterpriseEvaluationDialog(context, internshipId: internship.id);
+    await showEnterpriseEvaluationFormDialog(context,
+        internshipId: internship.id);
   }
 
   @override

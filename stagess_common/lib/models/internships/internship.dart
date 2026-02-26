@@ -176,11 +176,11 @@ class Internship extends ExtendedItemSerializable {
   final List<InternshipEvaluationAttitude> attitudeEvaluations;
   final List<InternshipEvaluationVisa> visaEvaluations;
   final List<SstEvaluation> sstEvaluations;
-  PostInternshipEnterpriseEvaluation? enterpriseEvaluation;
+  final List<PostInternshipEnterpriseEvaluation> enterpriseEvaluations;
 
   bool get isClosed => isNotActive && !isEnterpriseEvaluationPending;
   bool get isEnterpriseEvaluationPending =>
-      isNotActive && enterpriseEvaluation == null;
+      isNotActive && enterpriseEvaluations.isEmpty;
   bool get isActive => endDate == DateTime(0);
   bool get isNotActive => !isActive;
   bool get shouldTerminate =>
@@ -251,7 +251,7 @@ class Internship extends ExtendedItemSerializable {
     required this.attitudeEvaluations,
     required this.visaEvaluations,
     required this.sstEvaluations,
-    required this.enterpriseEvaluation,
+    required this.enterpriseEvaluations,
   }) : _mutables = mutables {
     _finalizeInitialization();
   }
@@ -279,7 +279,7 @@ class Internship extends ExtendedItemSerializable {
     List<InternshipEvaluationAttitude>? attitudeEvaluations,
     List<InternshipEvaluationVisa>? visaEvaluations,
     List<SstEvaluation>? sstEvaluations,
-    this.enterpriseEvaluation,
+    List<PostInternshipEnterpriseEvaluation>? enterpriseEvaluations,
   })  : _mutables = [
           InternshipMutableElements(
             creationDate: creationDate,
@@ -293,7 +293,8 @@ class Internship extends ExtendedItemSerializable {
         skillEvaluations = skillEvaluations ?? [],
         attitudeEvaluations = attitudeEvaluations ?? [],
         visaEvaluations = visaEvaluations ?? [],
-        sstEvaluations = sstEvaluations ?? [] {
+        sstEvaluations = sstEvaluations ?? [],
+        enterpriseEvaluations = enterpriseEvaluations ?? [] {
     _finalizeInitialization();
   }
 
@@ -314,7 +315,7 @@ class Internship extends ExtendedItemSerializable {
         attitudeEvaluations: [],
         visaEvaluations: [],
         sstEvaluations: [],
-        enterpriseEvaluation: null,
+        enterpriseEvaluations: [],
       );
 
   Internship.fromSerialized(super.map)
@@ -353,10 +354,10 @@ class Internship extends ExtendedItemSerializable {
         sstEvaluations = ListExt.from(map?['sst_evaluations'],
                 deserializer: (map) => SstEvaluation.fromSerialized(map)) ??
             [],
-        enterpriseEvaluation = map?['enterprise_evaluation'] == null
-            ? null
-            : PostInternshipEnterpriseEvaluation.fromSerialized(
-                (map?['enterprise_evaluation'] as Map<String, dynamic>?)),
+        enterpriseEvaluations = ListExt.from(map?['enterprise_evaluations'],
+                deserializer: (map) =>
+                    PostInternshipEnterpriseEvaluation.fromSerialized(map)) ??
+            [],
         super.fromSerialized() {
     _finalizeInitialization();
   }
@@ -380,7 +381,7 @@ class Internship extends ExtendedItemSerializable {
         'attitude_evaluations': attitudeEvaluations.serialize(),
         'visa_evaluations': visaEvaluations.serialize(),
         'sst_evaluations': sstEvaluations.serialize(),
-        'enterprise_evaluation': enterpriseEvaluation?.serialize(),
+        'enterprise_evaluations': enterpriseEvaluations.serialize(),
       };
 
   static FetchableFields get fetchableFields => FetchableFields.reference({
@@ -401,7 +402,7 @@ class Internship extends ExtendedItemSerializable {
         'attitude_evaluations': InternshipEvaluationAttitude.fetchableFields,
         'visa_evaluations': InternshipEvaluationVisa.fetchableFields,
         'sst_evaluations': SstEvaluation.fetchableFields,
-        'enterprise_evaluation':
+        'enterprise_evaluations':
             PostInternshipEnterpriseEvaluation.fetchableFields,
       });
 
@@ -440,7 +441,7 @@ class Internship extends ExtendedItemSerializable {
     List<InternshipEvaluationAttitude>? attitudeEvaluations,
     List<InternshipEvaluationVisa>? visaEvaluations,
     List<SstEvaluation>? sstEvaluations,
-    PostInternshipEnterpriseEvaluation? enterpriseEvaluation,
+    List<PostInternshipEnterpriseEvaluation>? enterpriseEvaluations,
   }) {
     return Internship._(
       id: id ?? this.id,
@@ -463,7 +464,8 @@ class Internship extends ExtendedItemSerializable {
           attitudeEvaluations?.toList() ?? this.attitudeEvaluations,
       visaEvaluations: visaEvaluations?.toList() ?? this.visaEvaluations,
       sstEvaluations: sstEvaluations ?? this.sstEvaluations,
-      enterpriseEvaluation: enterpriseEvaluation ?? this.enterpriseEvaluation,
+      enterpriseEvaluations:
+          enterpriseEvaluations ?? this.enterpriseEvaluations,
     );
   }
 
@@ -490,7 +492,7 @@ class Internship extends ExtendedItemSerializable {
       'attitude_evaluations',
       'visa_evaluations',
       'sst_evaluations',
-      'enterprise_evaluation',
+      'enterprise_evaluations',
     ];
     // Make sure data does not contain unrecognized fields
     if (data.keys.any((key) => !availableFields.contains(key))) {
@@ -544,12 +546,10 @@ class Internship extends ExtendedItemSerializable {
       sstEvaluations: ListExt.from(data['sst_evaluations'],
               deserializer: (map) => SstEvaluation.fromSerialized(map)) ??
           sstEvaluations,
-      enterpriseEvaluation:
-          enterpriseEvaluation?.copyWithData(data['enterprise_evaluation']) ??
-              (data['enterprise_evaluation'] == null
-                  ? null
-                  : PostInternshipEnterpriseEvaluation.fromSerialized(
-                      data['enterprise_evaluation'])),
+      enterpriseEvaluations: ListExt.from(data['enterprise_evaluations'],
+              deserializer: (map) =>
+                  PostInternshipEnterpriseEvaluation.fromSerialized(map)) ??
+          enterpriseEvaluations,
     );
   }
 
@@ -570,7 +570,7 @@ class Internship extends ExtendedItemSerializable {
         'attitudeEvaluations: $attitudeEvaluations, '
         'visaEvaluations: $visaEvaluations, '
         'sstEvaluations: $sstEvaluations, '
-        'enterpriseEvaluation: $enterpriseEvaluation'
+        'enterpriseEvaluations: $enterpriseEvaluations'
         '}';
   }
 }

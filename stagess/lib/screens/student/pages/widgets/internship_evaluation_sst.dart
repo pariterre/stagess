@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:stagess/common/widgets/dialogs/show_pdf_dialog.dart';
 import 'package:stagess/screens/internship_forms/student_steps/sst_evaluation_form_screen.dart';
-import 'package:stagess/screens/student/pages/pdf/sst_pdf_template.dart';
+import 'package:stagess/screens/student/pages/pdf/evaluation_sst_pdf_template.dart';
 import 'package:stagess/screens/student/pages/widgets/internship_evaluation_card.dart';
 import 'package:stagess_common_flutter/providers/internships_provider.dart';
 

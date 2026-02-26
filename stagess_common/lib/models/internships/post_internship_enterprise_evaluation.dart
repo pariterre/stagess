@@ -1,13 +1,13 @@
-import 'package:enhanced_containers_foundation/enhanced_containers_foundation.dart';
 import 'package:stagess_common/models/generic/fetchable_fields.dart';
 import 'package:stagess_common/models/internships/internship.dart';
+import 'package:stagess_common/models/internships/internship_evaluation.dart';
 
 double _doubleFromSerialized(num? number, {double defaultValue = 0}) {
   if (number is int) return number.toDouble();
   return double.parse(((number ?? defaultValue) as double).toStringAsFixed(5));
 }
 
-class PostInternshipEnterpriseEvaluation extends ItemSerializable {
+class PostInternshipEnterpriseEvaluation extends InternshipEvaluation {
   PostInternshipEnterpriseEvaluation({
     super.id,
     required this.date,
@@ -144,6 +144,7 @@ class PostInternshipEnterpriseEvaluation extends ItemSerializable {
   }
 
   String internshipId;
+  @override
   DateTime date;
 
   // Prerequisites

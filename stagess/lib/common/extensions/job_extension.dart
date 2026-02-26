@@ -15,14 +15,15 @@ extension JobExtension on Job {
       positionsOccupied(context, listen: listen);
 
   // Post-internship evaluations
-  List<PostInternshipEnterpriseEvaluation> postInternshipEnterpriseEvaluations(
-      BuildContext context) {
+  List<PostInternshipEnterpriseEvaluation>
+      mostRecentPostInternshipEnterpriseEvaluations(BuildContext context) {
     final internships = [
       for (final internship in InternshipsProvider.of(context, listen: false))
         if (internship.jobId == id) internship
     ];
     return [
-      for (final evaluation in internships.map((e) => e.enterpriseEvaluation))
+      for (final evaluation
+          in internships.map((e) => e.enterpriseEvaluations.lastOrNull))
         if (evaluation != null) evaluation
     ];
   }

@@ -6,7 +6,7 @@ import 'package:stagess/screens/internship_forms/enterprise_steps/specialized_st
 import 'package:stagess/screens/internship_forms/enterprise_steps/supervision_step.dart';
 import 'package:stagess/screens/internship_forms/enterprise_steps/task_and_ability_step.dart';
 import 'package:stagess_common/models/enterprises/job.dart';
-import 'package:stagess_common/models/generic/fetchable_fields.dart';
+import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/internships/post_internship_enterprise_evaluation.dart';
 import 'package:stagess_common_flutter/helpers/responsive_service.dart';
 import 'package:stagess_common_flutter/providers/enterprises_provider.dart';
@@ -16,87 +16,60 @@ import 'package:stagess_common_flutter/widgets/show_snackbar.dart';
 
 final _logger = Logger('EnterpriseEvaluationScreen');
 
-Future<void> showEnterpriseEvaluationDialog(
+Future<void> showEnterpriseEvaluationFormDialog(
   BuildContext context, {
   required String internshipId,
+  int? evaluationIndex,
 }) async {
+  final editMode = evaluationIndex == null;
   final internships = InternshipsProvider.of(context, listen: false);
+  final internship = internships.fromId(internshipId);
 
-  final hasLock = await showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => FutureBuilder(
-      future: Future.wait([
-        internships.getLockForItem(internships[internshipId]),
-        internships.fetchData(
-          id: internshipId,
-          fields: FetchableFields.all,
-        ),
-      ]),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final hasLock = (snapshot.data as List).first as bool;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.of(context).pop(hasLock);
-          });
-        }
-        return Dialog(
-          child: SizedBox(
-            width: 100,
-            height: 100,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
+  if (editMode) {
+    final hasLock = await internships.getLockForItem(internship);
+    if (!hasLock || !context.mounted) {
+      if (context.mounted) {
+        showSnackBar(
+          context,
+          message:
+              'Impossible de modifier ce stage, car il est en cours de modification par un autre utilisateur.',
         );
-      },
-    ),
-  );
-
-  if (!hasLock || !context.mounted) {
-    if (context.mounted) {
-      showSnackBar(
-        context,
-        message:
-            'Impossible de modifier ce stage, car il est en cours de modification par un autre utilisateur.',
-      );
+      }
+      return;
     }
-    return;
   }
 
-  final internship = internships.firstWhere((e) => e.id == internshipId);
-  final editedInternship = await showDialog(
+  final newEvaluation = await showDialog<PostInternshipEnterpriseEvaluation>(
     context: context,
     barrierDismissible: false,
     builder: (context) =>
-        Dialog(child: EnterpriseEvaluationScreen(id: internship.id)),
+        Dialog(child: _EnterpriseEvaluationScreen(internshipId: internship.id)),
   );
-  if (editedInternship == null) {
-    await internships.releaseLockForItem(internship);
-    return;
-  }
+  if (!editMode) return;
+  final isSuccess = newEvaluation != null &&
+      await internships.replaceWithConfirmation(
+          Internship.fromSerialized(internship.serialize())
+            ..enterpriseEvaluations.add(newEvaluation));
+  await internships.releaseLockForItem(internship);
 
-  await internships.replaceWithConfirmation(editedInternship);
-  if (context.mounted) {
-    showSnackBar(context, message: 'Le stage a été mis à jour');
+  if (isSuccess && context.mounted) {
+    showSnackBar(context, message: 'Le stage a bien été mis à jour');
   }
+  return;
 }
 
-class EnterpriseEvaluationScreen extends StatefulWidget {
-  const EnterpriseEvaluationScreen({super.key, required this.id});
+class _EnterpriseEvaluationScreen extends StatefulWidget {
+  const _EnterpriseEvaluationScreen({required this.internshipId});
 
-  static const route = '/enterprise_evaluation';
-  final String id; // Internship id
+  final String internshipId; // Internship id
 
   @override
-  State<EnterpriseEvaluationScreen> createState() =>
+  State<_EnterpriseEvaluationScreen> createState() =>
       _EnterpriseEvaluationScreenState();
 }
 
 class _EnterpriseEvaluationScreenState
-    extends State<EnterpriseEvaluationScreen> {
+    extends State<_EnterpriseEvaluationScreen> {
   final _scrollController = ScrollController();
 
   final List<StepState> _stepStatus = [
@@ -192,15 +165,12 @@ class _EnterpriseEvaluationScreenState
   }
 
   void _submit() {
-    _logger.info('Submitting evaluation for internship: ${widget.id}');
+    _logger
+        .info('Submitting evaluation for internship: ${widget.internshipId}');
 
-    // Add the evaluation to a copy of the internship
-    final internships = InternshipsProvider.of(context, listen: false);
-    final internship = internships.firstWhere((e) => e.id == widget.id);
-
-    internship.enterpriseEvaluation = PostInternshipEnterpriseEvaluation(
+    Navigator.of(context).pop(PostInternshipEnterpriseEvaluation(
       date: DateTime.now(),
-      internshipId: internship.id,
+      internshipId: widget.internshipId,
       skillsRequired: _taskAndAbilityKey.currentState!.requiredSkills,
       taskVariety: _taskAndAbilityKey.currentState!.taskVariety!,
       trainingPlanRespect: _taskAndAbilityKey.currentState!.trainingPlan!,
@@ -221,12 +191,7 @@ class _EnterpriseEvaluationScreenState
           _specializedStudentsKey.currentState!.acceptanceMentalHealthDisorder,
       acceptanceBehaviorDifficulties:
           _specializedStudentsKey.currentState!.acceptanceBehaviorDifficulties,
-    );
-
-    _logger.fine(
-      'Evaluation submitted successfully for internship: ${widget.id}',
-    );
-    Navigator.pop(context, internship);
+    ));
   }
 
   void _cancel() async {
@@ -244,11 +209,12 @@ class _EnterpriseEvaluationScreenState
   @override
   Widget build(BuildContext context) {
     _logger.fine(
-      'Building EnterpriseEvaluationScreen for internship: ${widget.id}',
+      'Building EnterpriseEvaluationScreen for internship: ${widget.internshipId}',
     );
 
     final internships = InternshipsProvider.of(context, listen: false);
-    final internship = internships.firstWhere((e) => e.id == widget.id);
+    final internship =
+        internships.firstWhere((e) => e.id == widget.internshipId);
 
     return SizedBox(
       width: ResponsiveService.maxBodyWidth,

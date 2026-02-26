@@ -235,13 +235,14 @@ class MySqlInternshipsRepository extends InternshipsRepository {
             fieldsToFetch: ['id', 'date', 'form_version'],
             idNameToDataTable: 'internship_id',
           ),
+          // TODO Move this
           sqlInterface.selectSubquery(
             dataTableName: 'post_internship_enterprise_evaluations',
             asName: 'enterprise_evaluation',
             fieldsToFetch: [
               'id',
-              'date',
               'internship_id',
+              'date',
               'task_variety',
               'training_plan_respect',
               'autonomy_expected',
