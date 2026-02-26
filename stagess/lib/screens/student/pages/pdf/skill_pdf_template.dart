@@ -17,9 +17,15 @@ final _textStyleBoldItalic = pw.TextStyle(font: pw.Font.timesBoldItalic());
 
 Future<Uint8List> generateSkillEvaluationPdf(
     BuildContext context, PdfPageFormat format,
-    {required SkillEvaluationFormController controller}) async {
-  _logger.info(
-      'Generating skill evaluation PDF for internship: ${controller.internshipId}');
+    {required String internshipId, required int evaluationIndex}) async {
+  _logger.info('Generating skill evaluation PDF for internship: $internshipId');
+
+  final controller = SkillEvaluationFormController.fromInternshipId(
+    context,
+    internshipId: internshipId,
+    evaluationIndex: evaluationIndex,
+    canModify: false,
+  );
 
   final document = pw.Document(pageMode: PdfPageMode.outlines);
 

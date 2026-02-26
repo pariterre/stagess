@@ -1,5 +1,6 @@
 import 'package:enhanced_containers_foundation/enhanced_containers_foundation.dart';
 import 'package:stagess_common/models/generic/fetchable_fields.dart';
+import 'package:stagess_common/models/internships/internship_evaluation.dart';
 import 'package:stagess_common/models/internships/task_appreciation.dart';
 
 enum SkillAppreciation {
@@ -90,9 +91,10 @@ class SkillEvaluation extends ItemSerializable {
   }
 }
 
-class InternshipEvaluationSkill extends ItemSerializable {
+class InternshipEvaluationSkill extends InternshipEvaluation {
   static const String currentVersion = '1.0.0';
 
+  @override
   DateTime date;
   List<String> presentAtEvaluation;
   final SkillEvaluationGranularity skillGranularity;

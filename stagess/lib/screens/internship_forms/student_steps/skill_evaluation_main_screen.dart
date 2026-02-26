@@ -20,12 +20,13 @@ import 'package:stagess_common_flutter/widgets/show_snackbar.dart';
 
 final _logger = Logger('SkillEvaluationDialog');
 
-Future<Internship?> showSkillEvaluationDialog({
-  required BuildContext context,
+Future<Internship?> showSkillEvaluationFormDialog(
+  BuildContext context, {
   required String internshipId,
-  required bool editMode,
+  int? evaluationIndex,
 }) async {
-  _logger.info('Showing SkillEvaluationDialog with editMode: $editMode');
+  final editMode = evaluationIndex == null;
+  _logger.info('Showing SkillEvaluationFormDialog with editMode: $editMode');
 
   final internships = InternshipsProvider.of(context, listen: false);
   final internship = internships[internshipId];
@@ -53,7 +54,7 @@ Future<Internship?> showSkillEvaluationDialog({
           child: SkillEvaluationMainScreen(
             rootContext: context,
             internshipId: internshipId,
-            editMode: editMode,
+            evaluationIndex: evaluationIndex,
           ),
         ),
       ),
@@ -79,14 +80,16 @@ class SkillEvaluationMainScreen extends StatefulWidget {
     super.key,
     required this.rootContext,
     required this.internshipId,
-    required this.editMode,
+    this.evaluationIndex,
   });
 
   static const route = '/skill_evaluation';
 
   final BuildContext rootContext;
   final String internshipId;
-  final bool editMode;
+  final int? evaluationIndex;
+
+  bool get editMode => evaluationIndex == null;
 
   @override
   State<SkillEvaluationMainScreen> createState() =>
@@ -94,16 +97,25 @@ class SkillEvaluationMainScreen extends StatefulWidget {
 }
 
 class _SkillEvaluationMainScreenState extends State<SkillEvaluationMainScreen> {
-  late final _formController = SkillEvaluationFormController(
-    context,
-    internshipId: widget.internshipId,
-    canModify: true,
-  );
-  late int _currentEvaluationIndex = _formController
-          .internship(context, listen: false)
-          .skillEvaluations
-          .length -
-      1;
+  late final _formController = widget.editMode
+      ? SkillEvaluationFormController(
+          context,
+          internshipId: widget.internshipId,
+          canModify: true,
+        )
+      : SkillEvaluationFormController.fromInternshipId(
+          context,
+          internshipId: widget.internshipId,
+          evaluationIndex: widget.evaluationIndex!,
+          canModify: false,
+        );
+  late int _currentEvaluationIndex = widget.editMode
+      ? _formController
+              .internship(context, listen: false)
+              .skillEvaluations
+              .length -
+          1
+      : widget.evaluationIndex!;
 
   @override
   void initState() {
@@ -174,7 +186,7 @@ class _SkillEvaluationMainScreenState extends State<SkillEvaluationMainScreen> {
                             formController: _formController,
                             editMode: widget.editMode,
                           ),
-                          _buildAutofillChooser(),
+                          if (widget.editMode) _buildAutofillChooser(),
                           _JobToEvaluate(
                             formController: _formController,
                             editMode: widget.editMode,
@@ -533,7 +545,8 @@ class _JobToEvaluateState extends State<_JobToEvaluate> {
                   }),
                 ],
               ),
-              if (widget.formController.isFilledUsingPreviousEvaluation)
+              if (widget.editMode &&
+                  widget.formController.isFilledUsingPreviousEvaluation)
                 Align(
                   alignment: Alignment.topRight,
                   child: SizedBox(
@@ -634,7 +647,8 @@ class _StartEvaluation extends StatelessWidget {
               ),
             );
           },
-          child: const Text('Commencer l\'évaluation'),
+          child:
+              Text(editMode ? 'Commencer l\'évaluation' : 'Voir l\'évaluation'),
         ),
       ),
     );

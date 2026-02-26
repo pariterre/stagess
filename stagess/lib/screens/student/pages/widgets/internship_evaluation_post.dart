@@ -41,7 +41,7 @@ class EvaluationPost extends StatelessWidget {
               Text(isFilled
                   ? 'Le questionnaire «\u00a0Repérer les risques SST\u00a0» a '
                       'été rempli pour ce poste de travail.\n'
-                      'Dernière modification le '
+                      'Dernière modification le\u00a0:'
                       '${DateFormat.yMMMEd('fr_CA').format(internship.enterpriseEvaluation!.date)}'
                   : 'Le questionnaire «\u00a0Repérer les risques SST\u00a0» n\'a '
                       'jamais été rempli pour ce poste de travail.'),

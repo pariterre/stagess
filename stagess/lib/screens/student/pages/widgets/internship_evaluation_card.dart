@@ -1,0 +1,139 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
+import 'package:stagess_common/models/internships/internship_evaluation.dart';
+import 'package:stagess_common_flutter/providers/internships_provider.dart';
+import 'package:stagess_common_flutter/providers/teachers_provider.dart';
+import 'package:stagess_common_flutter/widgets/animated_expanding_card.dart';
+
+final _logger = Logger('InternshipEvaluationCard');
+
+class InternshipEvaluationCard extends StatefulWidget {
+  const InternshipEvaluationCard({
+    super.key,
+    required this.title,
+    required this.internshipId,
+    required this.evaluations,
+    required this.onClickedNewEvaluation,
+    required this.onClickedShowEvaluation,
+    required this.onClickedShowEvaluationPdf,
+  });
+
+  final String title;
+  final String internshipId;
+  final List<InternshipEvaluation> evaluations;
+  final Function() onClickedNewEvaluation;
+  final Function(int evaluationIndex) onClickedShowEvaluation;
+  final Function(int evaluationIndex) onClickedShowEvaluationPdf;
+
+  @override
+  State<InternshipEvaluationCard> createState() =>
+      _InternshipEvaluationCardState();
+}
+
+class _InternshipEvaluationCardState extends State<InternshipEvaluationCard> {
+  static const _interline = 12.0;
+
+  @override
+  Widget build(BuildContext context) {
+    _logger.finer(
+      'Building EvaluationSkill for internship: ${widget.internshipId}',
+    );
+
+    final internship =
+        InternshipsProvider.of(context).fromId(widget.internshipId);
+    final teacherId =
+        TeachersProvider.of(context, listen: false).currentTeacher?.id;
+
+    return AnimatedExpandingCard(
+      elevation: 0.0,
+      header: (ctx, isExpanded) => Text(
+        widget.title,
+        style: Theme.of(context)
+            .textTheme
+            .titleMedium!
+            .copyWith(color: Colors.black),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12.0, right: 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.evaluations.isEmpty
+                ? 'Aucune évaluation réalisée pour ce stage.'
+                : 'Dernière évaluation réalisée le\u00a0: '
+                    '${DateFormat.yMMMEd('fr_CA').format(widget.evaluations.last.date)}'),
+            Visibility(
+              visible: internship.supervisingTeacherIds.contains(teacherId),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: TextButton(
+                      onPressed: () => widget.onClickedNewEvaluation(),
+                      child: Text(
+                          widget.evaluations.isEmpty
+                              ? 'Évaluer l\'élève'
+                              : 'Évaluer de nouveau',
+                          textAlign: TextAlign.center)),
+                ),
+              ),
+            ),
+            if (widget.evaluations.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: _buildSelectShowPreviousEvaluations(),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSelectShowPreviousEvaluations() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: _interline),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+              widget.evaluations.length > 1
+                  ? 'Afficher les évaluations du\u00a0: '
+                  : 'Afficher l\'évaluation du\u00a0: ',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widget.evaluations.reversed.toList().asMap().keys.map(
+              (iterationIndex) {
+                // Reminder the list is reversed for display
+                final index = widget.evaluations.length - 1 - iterationIndex;
+
+                return Row(
+                  children: [
+                    SizedBox(
+                      width: 150,
+                      child: Text(
+                        '\u2022 ${DateFormat('dd MMMM yyyy', 'fr_CA').format(widget.evaluations[index].date)}',
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () => widget.onClickedShowEvaluation(index),
+                        color: Theme.of(context).primaryColor,
+                        icon: const Icon(Icons.insert_drive_file)),
+                    SizedBox(width: 4),
+                    IconButton(
+                        onPressed: () =>
+                            widget.onClickedShowEvaluationPdf(index),
+                        color: Theme.of(context).primaryColor,
+                        icon: const Icon(Icons.picture_as_pdf)),
+                  ],
+                );
+              },
+            ).toList(),
+          )
+        ],
+      ),
+    );
+  }
+}
