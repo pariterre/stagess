@@ -309,12 +309,15 @@ class InternshipDetailsState extends State<InternshipDetails> {
             ),
         ],
       ),
-      child: _InternshipBody(
-        internship: _internship,
-        editMode: _editMode,
-        onSave: _toggleEditMode,
-        onRequestChangedDates: _promptDateRange,
-        internshipController: _internshipController,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12.0, right: 24.0),
+        child: _InternshipBody(
+          internship: _internship,
+          editMode: _editMode,
+          onSave: _toggleEditMode,
+          onRequestChangedDates: _promptDateRange,
+          internshipController: _internshipController,
+        ),
       ),
     );
   }
