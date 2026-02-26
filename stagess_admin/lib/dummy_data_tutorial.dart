@@ -1970,20 +1970,25 @@ Future<void> _addDummyInternships(
         ),
       ],
       transportations: [Transportation.yes, Transportation.pass],
-      sstEvaluation: SstEvaluation(
-        presentAtEvaluation: ['Responsable en milieu de stage', 'Mme Marcotte'],
-        questions: {
-          'Q1': ['Oui'],
-          'Q1+t': ['Peu souvent, à la discrétion des employés.'],
-          'Q3': ['Un diable'],
-          'Q5': ['Des ciseaux'],
-          'Q9': ['Des solvants', 'Des produits de nettoyage'],
-          'Q12': ['Bruyant'],
-          'Q12+t': ['Bouchons a oreilles'],
-          'Q15': ['Oui'],
-        },
-        date: DateTime.now(),
-      ),
+      sstEvaluations: [
+        SstEvaluation(
+          presentAtEvaluation: [
+            'Responsable en milieu de stage',
+            'Mme Marcotte'
+          ],
+          questions: {
+            'Q1': ['Oui'],
+            'Q1+t': ['Peu souvent, à la discrétion des employés.'],
+            'Q3': ['Un diable'],
+            'Q5': ['Des ciseaux'],
+            'Q9': ['Des solvants', 'Des produits de nettoyage'],
+            'Q12': ['Bruyant'],
+            'Q12+t': ['Bouchons a oreilles'],
+            'Q15': ['Oui'],
+          },
+          date: DateTime.now(),
+        )
+      ],
       visitFrequencies: 'Une visite par semaine',
     ),
   );
@@ -2089,22 +2094,24 @@ Future<void> _addDummyInternships(
         ],
         transportations: [Transportation.pass],
         visitFrequencies: 'Une visite par semaine',
-        sstEvaluation: SstEvaluation(
-          presentAtEvaluation: ['Responsable en milieu de stage'],
-          questions: {
-            'Q1': ['Oui'],
-            'Q1+t': [
-              'En début et en fin de journée, surtout des pots de fleurs.',
-            ],
-            'Q3': ['Un diable'],
-            'Q5': ['Un couteau', 'Des ciseaux'],
-            'Q7': ['Des pesticides', 'Engrais'],
-            'Q12': ['__NOT_APPLICABLE_INTERNAL__'],
-            'Q15': ['Oui'],
-            'Q15+t': ['Aucun'],
-            'Q16': ['Ranger le local avant de quitter'],
-          },
-        )),
+        sstEvaluations: [
+          SstEvaluation(
+            presentAtEvaluation: ['Responsable en milieu de stage'],
+            questions: {
+              'Q1': ['Oui'],
+              'Q1+t': [
+                'En début et en fin de journée, surtout des pots de fleurs.',
+              ],
+              'Q3': ['Un diable'],
+              'Q5': ['Un couteau', 'Des ciseaux'],
+              'Q7': ['Des pesticides', 'Engrais'],
+              'Q12': ['__NOT_APPLICABLE_INTERNAL__'],
+              'Q15': ['Oui'],
+              'Q15+t': ['Aucun'],
+              'Q16': ['Ranger le local avant de quitter'],
+            },
+          )
+        ]),
   );
 
   startingPeriod = DateTime.now();
@@ -2363,19 +2370,21 @@ Future<void> _addDummyInternships(
         ],
         transportations: [Transportation.ticket],
         visitFrequencies: 'Une visite par semaine',
-        sstEvaluation: SstEvaluation(
-          presentAtEvaluation: ['Responsable en milieu de stage'],
-          questions: {
-            'Q1': ['Non'],
-            'Q5': ['Des couteaux'],
-            'Q9': ['Des solvants', 'Des produits ménagers'],
-            'Q12': ['__NOT_APPLICABLE_INTERNAL__'],
-            'Q12+t': ['Bouchons a oreilles'],
-            'Q15': ['Oui'],
-            'Q15+t': ['Travail quotidien avec les clients'],
-          },
-          date: DateTime.now(),
-        )),
+        sstEvaluations: [
+          SstEvaluation(
+            presentAtEvaluation: ['Responsable en milieu de stage'],
+            questions: {
+              'Q1': ['Non'],
+              'Q5': ['Des couteaux'],
+              'Q9': ['Des solvants', 'Des produits ménagers'],
+              'Q12': ['__NOT_APPLICABLE_INTERNAL__'],
+              'Q12+t': ['Bouchons a oreilles'],
+              'Q15': ['Oui'],
+              'Q15+t': ['Travail quotidien avec les clients'],
+            },
+            date: DateTime.now(),
+          )
+        ]),
   );
 
   startingPeriod = DateTime.now().subtract(const Duration(days: 100));
@@ -2640,18 +2649,20 @@ Future<void> _addDummyInternships(
         ],
         transportations: [Transportation.none],
         visitFrequencies: 'Une visite par semaine',
-        sstEvaluation: SstEvaluation(
-          presentAtEvaluation: ['Responsable en milieu de stage'],
-          questions: {
-            'Q1': ['Oui'],
-            'Q1+t': ['Plusieurs fois par jour, surtout des pots de fleurs.'],
-            'Q3': ['Un diable'],
-            'Q5': ['Un couteau', 'Des ciseaux', 'Un sécateur'],
-            'Q7': ['Des pesticides', 'Engrais'],
-            'Q12': ['Bruyant'],
-            'Q15': ['Non'],
-          },
-        )),
+        sstEvaluations: [
+          SstEvaluation(
+            presentAtEvaluation: ['Responsable en milieu de stage'],
+            questions: {
+              'Q1': ['Oui'],
+              'Q1+t': ['Plusieurs fois par jour, surtout des pots de fleurs.'],
+              'Q3': ['Un diable'],
+              'Q5': ['Un couteau', 'Des ciseaux', 'Un sécateur'],
+              'Q7': ['Des pesticides', 'Engrais'],
+              'Q12': ['Bruyant'],
+              'Q15': ['Non'],
+            },
+          )
+        ]),
   );
 
   startingPeriod = DateTime.now().subtract(Duration(days: 30));

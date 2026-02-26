@@ -1,25 +1,13 @@
-import 'package:enhanced_containers_foundation/enhanced_containers_foundation.dart';
 import 'package:stagess_common/models/generic/fetchable_fields.dart';
 import 'package:stagess_common/models/internships/internship.dart';
+import 'package:stagess_common/models/internships/internship_evaluation.dart';
 
-class SstEvaluation extends ItemSerializable {
+class SstEvaluation extends InternshipEvaluation {
   final List<String> presentAtEvaluation;
   final Map<String, List<String>?> questions;
+
+  @override
   DateTime date;
-
-  void update({
-    required List<String> presentAtEvaluation,
-    required Map<String, List<String>?> questions,
-  }) {
-    this.presentAtEvaluation.clear();
-    this.presentAtEvaluation.addAll(presentAtEvaluation);
-
-    this.questions.clear();
-    this.questions.addAll({...questions});
-    this.questions.removeWhere((key, value) => value == null);
-
-    date = DateTime.now();
-  }
 
   SstEvaluation({
     super.id,
@@ -28,8 +16,8 @@ class SstEvaluation extends ItemSerializable {
     required this.questions,
   }) : date = date ?? DateTime.now();
 
-  static SstEvaluation get empty =>
-      SstEvaluation(presentAtEvaluation: [], questions: {}, date: DateTime(0));
+  static SstEvaluation get empty => SstEvaluation(
+      presentAtEvaluation: [], questions: {}, date: DateTime.now());
 
   SstEvaluation copyWith({
     String? id,

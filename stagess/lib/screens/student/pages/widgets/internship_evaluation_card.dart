@@ -13,6 +13,8 @@ class InternshipEvaluationCard extends StatefulWidget {
     super.key,
     required this.title,
     required this.internshipId,
+    required this.evaluateButtonText,
+    required this.reevaluateButtonText,
     required this.evaluations,
     required this.onClickedNewEvaluation,
     required this.onClickedShowEvaluation,
@@ -21,6 +23,8 @@ class InternshipEvaluationCard extends StatefulWidget {
 
   final String title;
   final String internshipId;
+  final String evaluateButtonText;
+  final String reevaluateButtonText;
   final List<InternshipEvaluation> evaluations;
   final Function() onClickedNewEvaluation;
   final Function(int evaluationIndex) onClickedShowEvaluation;
@@ -73,8 +77,8 @@ class _InternshipEvaluationCardState extends State<InternshipEvaluationCard> {
                       onPressed: () => widget.onClickedNewEvaluation(),
                       child: Text(
                           widget.evaluations.isEmpty
-                              ? 'Évaluer l\'élève'
-                              : 'Évaluer de nouveau',
+                              ? widget.evaluateButtonText
+                              : widget.reevaluateButtonText,
                           textAlign: TextAlign.center)),
                 ),
               ),

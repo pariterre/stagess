@@ -175,8 +175,7 @@ class Internship extends ExtendedItemSerializable {
   final List<InternshipEvaluationSkill> skillEvaluations;
   final List<InternshipEvaluationAttitude> attitudeEvaluations;
   final List<InternshipEvaluationVisa> visaEvaluations;
-
-  SstEvaluation? sstEvaluation;
+  final List<SstEvaluation> sstEvaluations;
   PostInternshipEnterpriseEvaluation? enterpriseEvaluation;
 
   bool get isClosed => isNotActive && !isEnterpriseEvaluationPending;
@@ -251,7 +250,7 @@ class Internship extends ExtendedItemSerializable {
     required this.skillEvaluations,
     required this.attitudeEvaluations,
     required this.visaEvaluations,
-    required this.sstEvaluation,
+    required this.sstEvaluations,
     required this.enterpriseEvaluation,
   }) : _mutables = mutables {
     _finalizeInitialization();
@@ -279,7 +278,7 @@ class Internship extends ExtendedItemSerializable {
     List<InternshipEvaluationSkill>? skillEvaluations,
     List<InternshipEvaluationAttitude>? attitudeEvaluations,
     List<InternshipEvaluationVisa>? visaEvaluations,
-    this.sstEvaluation,
+    List<SstEvaluation>? sstEvaluations,
     this.enterpriseEvaluation,
   })  : _mutables = [
           InternshipMutableElements(
@@ -293,7 +292,8 @@ class Internship extends ExtendedItemSerializable {
         ],
         skillEvaluations = skillEvaluations ?? [],
         attitudeEvaluations = attitudeEvaluations ?? [],
-        visaEvaluations = visaEvaluations ?? [] {
+        visaEvaluations = visaEvaluations ?? [],
+        sstEvaluations = sstEvaluations ?? [] {
     _finalizeInitialization();
   }
 
@@ -313,7 +313,7 @@ class Internship extends ExtendedItemSerializable {
         skillEvaluations: [],
         attitudeEvaluations: [],
         visaEvaluations: [],
-        sstEvaluation: null,
+        sstEvaluations: [],
         enterpriseEvaluation: null,
       );
 
@@ -350,9 +350,9 @@ class Internship extends ExtendedItemSerializable {
                 deserializer: (map) =>
                     InternshipEvaluationVisa.fromSerialized(map)) ??
             [],
-        sstEvaluation = map?['sst_evaluation'] == null
-            ? null
-            : SstEvaluation.fromSerialized(map?['sst_evaluation']),
+        sstEvaluations = ListExt.from(map?['sst_evaluations'],
+                deserializer: (map) => SstEvaluation.fromSerialized(map)) ??
+            [],
         enterpriseEvaluation = map?['enterprise_evaluation'] == null
             ? null
             : PostInternshipEnterpriseEvaluation.fromSerialized(
@@ -379,7 +379,7 @@ class Internship extends ExtendedItemSerializable {
         'skill_evaluations': skillEvaluations.serialize(),
         'attitude_evaluations': attitudeEvaluations.serialize(),
         'visa_evaluations': visaEvaluations.serialize(),
-        'sst_evaluation': sstEvaluation?.serialize(),
+        'sst_evaluations': sstEvaluations.serialize(),
         'enterprise_evaluation': enterpriseEvaluation?.serialize(),
       };
 
@@ -400,7 +400,7 @@ class Internship extends ExtendedItemSerializable {
         'skill_evaluations': InternshipEvaluationSkill.fetchableFields,
         'attitude_evaluations': InternshipEvaluationAttitude.fetchableFields,
         'visa_evaluations': InternshipEvaluationVisa.fetchableFields,
-        'sst_evaluation': SstEvaluation.fetchableFields,
+        'sst_evaluations': SstEvaluation.fetchableFields,
         'enterprise_evaluation':
             PostInternshipEnterpriseEvaluation.fetchableFields,
       });
@@ -439,7 +439,7 @@ class Internship extends ExtendedItemSerializable {
     List<InternshipEvaluationSkill>? skillEvaluations,
     List<InternshipEvaluationAttitude>? attitudeEvaluations,
     List<InternshipEvaluationVisa>? visaEvaluations,
-    SstEvaluation? sstEvaluation,
+    List<SstEvaluation>? sstEvaluations,
     PostInternshipEnterpriseEvaluation? enterpriseEvaluation,
   }) {
     return Internship._(
@@ -462,7 +462,7 @@ class Internship extends ExtendedItemSerializable {
       attitudeEvaluations:
           attitudeEvaluations?.toList() ?? this.attitudeEvaluations,
       visaEvaluations: visaEvaluations?.toList() ?? this.visaEvaluations,
-      sstEvaluation: sstEvaluation ?? this.sstEvaluation,
+      sstEvaluations: sstEvaluations ?? this.sstEvaluations,
       enterpriseEvaluation: enterpriseEvaluation ?? this.enterpriseEvaluation,
     );
   }
@@ -489,7 +489,7 @@ class Internship extends ExtendedItemSerializable {
       'skill_evaluations',
       'attitude_evaluations',
       'visa_evaluations',
-      'sst_evaluation',
+      'sst_evaluations',
       'enterprise_evaluation',
     ];
     // Make sure data does not contain unrecognized fields
@@ -541,10 +541,9 @@ class Internship extends ExtendedItemSerializable {
               deserializer: (map) =>
                   InternshipEvaluationVisa.fromSerialized(map)) ??
           visaEvaluations,
-      sstEvaluation: sstEvaluation?.copyWithData(data['sst_evaluation']) ??
-          (data['sst_evaluation'] == null
-              ? null
-              : SstEvaluation.fromSerialized(data['sst_evaluation'])),
+      sstEvaluations: ListExt.from(data['sst_evaluations'],
+              deserializer: (map) => SstEvaluation.fromSerialized(map)) ??
+          sstEvaluations,
       enterpriseEvaluation:
           enterpriseEvaluation?.copyWithData(data['enterprise_evaluation']) ??
               (data['enterprise_evaluation'] == null
@@ -570,6 +569,7 @@ class Internship extends ExtendedItemSerializable {
         'skillEvaluations: $skillEvaluations, '
         'attitudeEvaluations: $attitudeEvaluations, '
         'visaEvaluations: $visaEvaluations, '
+        'sstEvaluations: $sstEvaluations, '
         'enterpriseEvaluation: $enterpriseEvaluation'
         '}';
   }

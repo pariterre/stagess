@@ -1,5 +1,6 @@
 import 'package:enhanced_containers_foundation/enhanced_containers_foundation.dart';
 import 'package:stagess_common/models/generic/fetchable_fields.dart';
+import 'package:stagess_common/models/internships/internship_evaluation.dart';
 
 class AttitudeEvaluation extends ItemSerializable {
   Inattendance inattendance;
@@ -95,10 +96,12 @@ class AttitudeEvaluation extends ItemSerializable {
   }
 }
 
-class InternshipEvaluationAttitude extends ItemSerializable {
+class InternshipEvaluationAttitude extends InternshipEvaluation {
   static const String currentVersion = '1.0.0';
 
+  @override
   DateTime date;
+
   List<String> presentAtEvaluation;
   AttitudeEvaluation attitude;
   String comments;

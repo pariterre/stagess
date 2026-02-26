@@ -5,36 +5,6 @@ import '../utils.dart';
 
 void main() {
   group('SstEvaluation', () {
-    test('"update" erases old answers', () {
-      final sstEvaluation = SstEvaluation.empty;
-      sstEvaluation.update(presentAtEvaluation: [
-        'New person'
-      ], questions: {
-        'Q1': ['My first answer']
-      });
-      expect(sstEvaluation.presentAtEvaluation.length, 1);
-      expect(sstEvaluation.questions.length, 1);
-
-      sstEvaluation.update(presentAtEvaluation: [
-        'Another person',
-        'And mine'
-      ], questions: {
-        'Q2': ['My second first answer']
-      });
-      expect(sstEvaluation.presentAtEvaluation.length, 2);
-      expect(sstEvaluation.questions.length, 1);
-
-      sstEvaluation.update(presentAtEvaluation: [
-        'Another person',
-        'And mine'
-      ], questions: {
-        'Q1': ['My first answer'],
-        'Q2': ['My true second answer']
-      });
-      expect(sstEvaluation.presentAtEvaluation.length, 2);
-      expect(sstEvaluation.questions.length, 2);
-    });
-
     test('serialization and deserialization works', () {
       final sstEvaluation = dummySstEvaluation();
       final serialized = sstEvaluation.serialize();

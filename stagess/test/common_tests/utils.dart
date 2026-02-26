@@ -356,7 +356,7 @@ Internship dummyInternship({
     achievedDuration: achievedLength,
     enterpriseEvaluation:
         dummyPostInternshipEnterpriseEvaluation(internshipId: id),
-    sstEvaluation: dummySstEvaluation(id: id),
+    sstEvaluations: [dummySstEvaluation(id: id)],
     weeklySchedules: [dummyWeeklySchedule(period: period)],
     skillEvaluations: [dummyInternshipEvaluationSkill()],
     attitudeEvaluations: [dummyInternshipEvaluationAttitude()],

@@ -5,7 +5,6 @@ import 'package:logging/logging.dart';
 import 'package:stagess/common/provider_helpers/students_helpers.dart';
 import 'package:stagess/common/widgets/scrollable_stepper.dart';
 import 'package:stagess/common/widgets/sub_title.dart';
-import 'package:stagess/screens/internship_forms/student_steps/attitude_evaluation_form_controller.dart';
 import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/internships/internship_evaluation_attitude.dart';
 import 'package:stagess_common_flutter/helpers/responsive_service.dart';
@@ -17,14 +16,25 @@ import 'package:stagess_common_flutter/widgets/show_snackbar.dart';
 
 final _logger = Logger('AttitudeEvaluationScreen');
 
-Future<Internship?> showAttitudeEvaluationDialog({
-  required BuildContext context,
-  required AttitudeEvaluationFormController formController,
-  required bool editMode,
+Future<void> showAttitudeEvaluationDialog(
+  BuildContext context, {
+  required String internshipId,
+  int? evaluationIndex,
 }) async {
+  final editMode = evaluationIndex == null;
   _logger.info('Showing AttitudeEvaluationDialog with editMode: $editMode');
+
   final internships = InternshipsProvider.of(context, listen: false);
-  final internship = internships.fromId(formController.internshipId);
+  final internship = internships.fromId(internshipId);
+
+  evaluationIndex = evaluationIndex ??
+      (internship.attitudeEvaluations.isEmpty
+          ? null
+          : internship.attitudeEvaluations.length - 1);
+  final controller = evaluationIndex == null
+      ? AttitudeEvaluationFormController(internshipId: internshipId)
+      : AttitudeEvaluationFormController.fromInternshipId(context,
+          internshipId: internshipId, evaluationIndex: evaluationIndex);
 
   if (editMode) {
     final hasLock = await internships.getLockForItem(internship);
@@ -36,60 +46,166 @@ Future<Internship?> showAttitudeEvaluationDialog({
               'Impossible de modifier ce stage, car il est en cours de modification par un autre utilisateur.',
         );
       }
-      return null;
+      return;
     }
   }
 
-  final editedInternship = await showDialog<Internship?>(
+  final newEvaluation = await showDialog<InternshipEvaluationAttitude?>(
     context: context,
     barrierDismissible: false,
     builder: (context) => Navigator(
       onGenerateRoute: (settings) => MaterialPageRoute(
         builder: (ctx) => Dialog(
-          child: AttitudeEvaluationScreen(
+          child: _AttitudeEvaluationScreen(
             rootContext: context,
-            formController: formController,
+            formController: controller,
             editMode: editMode,
           ),
         ),
       ),
     ),
   );
-  if (!editMode) return editedInternship;
+  if (!editMode) return;
 
-  if (editedInternship == null) {
-    await internships.releaseLockForItem(internship);
-    return editedInternship;
-  }
+  final isSuccess = newEvaluation != null &&
+      await internships.replaceWithConfirmation(
+          Internship.fromSerialized(internship.serialize())
+            ..attitudeEvaluations.add(newEvaluation));
 
-  await internships.replaceWithConfirmation(editedInternship);
-  if (context.mounted) {
-    showSnackBar(context, message: 'Le stage a été mis à jour');
-  }
   await internships.releaseLockForItem(internship);
-  return editedInternship;
+
+  if (isSuccess && context.mounted) {
+    showSnackBar(context, message: 'Le stage a bien été mis à jour');
+  }
+  return;
 }
 
-class AttitudeEvaluationScreen extends StatefulWidget {
-  const AttitudeEvaluationScreen({
-    super.key,
+class AttitudeEvaluationFormController {
+  static const _formVersion = '1.0.0';
+
+  AttitudeEvaluationFormController({required this.internshipId});
+  final String internshipId;
+  Internship internship(BuildContext context, {bool listen = true}) =>
+      InternshipsProvider.of(context, listen: listen)[internshipId];
+
+  factory AttitudeEvaluationFormController.fromInternshipId(
+    BuildContext context, {
+    required String internshipId,
+    required int evaluationIndex,
+  }) {
+    Internship internship =
+        InternshipsProvider.of(context, listen: false)[internshipId];
+    InternshipEvaluationAttitude evaluation =
+        internship.attitudeEvaluations[evaluationIndex];
+
+    final controller = AttitudeEvaluationFormController(
+      internshipId: internshipId,
+    );
+
+    controller.evaluationDate = evaluation.date;
+
+    controller.wereAtMeeting.clear();
+    controller.wereAtMeeting.addAll(evaluation.presentAtEvaluation);
+
+    controller.responses[Inattendance] = evaluation.attitude.inattendance;
+    controller.responses[Ponctuality] = evaluation.attitude.ponctuality;
+    controller.responses[Sociability] = evaluation.attitude.sociability;
+    controller.responses[Politeness] = evaluation.attitude.politeness;
+    controller.responses[Motivation] = evaluation.attitude.motivation;
+    controller.responses[DressCode] = evaluation.attitude.dressCode;
+    controller.responses[QualityOfWork] = evaluation.attitude.qualityOfWork;
+    controller.responses[Productivity] = evaluation.attitude.productivity;
+    controller.responses[Autonomy] = evaluation.attitude.autonomy;
+    controller.responses[Cautiousness] = evaluation.attitude.cautiousness;
+    controller.responses[GeneralAppreciation] =
+        evaluation.attitude.generalAppreciation;
+
+    controller.commentsController.text = evaluation.comments;
+
+    return controller;
+  }
+
+  InternshipEvaluationAttitude toInternshipEvaluation() {
+    return InternshipEvaluationAttitude(
+      date: evaluationDate,
+      presentAtEvaluation: wereAtMeeting,
+      attitude: AttitudeEvaluation(
+        inattendance: responses[Inattendance]! as Inattendance,
+        ponctuality: responses[Ponctuality]! as Ponctuality,
+        sociability: responses[Sociability]! as Sociability,
+        politeness: responses[Politeness]! as Politeness,
+        motivation: responses[Motivation]! as Motivation,
+        dressCode: responses[DressCode]! as DressCode,
+        qualityOfWork: responses[QualityOfWork]! as QualityOfWork,
+        productivity: responses[Productivity]! as Productivity,
+        autonomy: responses[Autonomy]! as Autonomy,
+        cautiousness: responses[Cautiousness]! as Cautiousness,
+        generalAppreciation:
+            responses[GeneralAppreciation]! as GeneralAppreciation,
+      ),
+      comments: commentsController.text,
+      formVersion: _formVersion,
+    );
+  }
+
+  DateTime evaluationDate = DateTime.now();
+
+  late final wereAtMeetingController = CheckboxWithOtherController(
+    elements: wereAtMeetingOptions,
+    initialValues: wereAtMeeting,
+  );
+  final List<String> wereAtMeetingOptions = [
+    'Stagiaire',
+    'Responsable en milieu de stage',
+  ];
+  final List<String> wereAtMeeting = [];
+  void setWereAtMeeting() {
+    wereAtMeeting.clear();
+    wereAtMeeting.addAll(wereAtMeetingController.values);
+  }
+
+  Map<Type, AttitudeCategoryEnum?> responses = {};
+
+  final commentsController = TextEditingController();
+
+  bool get isAttitudeCompleted =>
+      responses[Inattendance] != null &&
+      responses[Ponctuality] != null &&
+      responses[Sociability] != null &&
+      responses[Politeness] != null &&
+      responses[Motivation] != null &&
+      responses[DressCode] != null;
+
+  bool get isSkillCompleted =>
+      responses[QualityOfWork] != null &&
+      responses[Productivity] != null &&
+      responses[Autonomy] != null &&
+      responses[Cautiousness] != null;
+
+  bool get isGeneralAppreciationCompleted =>
+      responses[GeneralAppreciation] != null;
+
+  bool get isCompleted =>
+      isAttitudeCompleted && isSkillCompleted && isGeneralAppreciationCompleted;
+}
+
+class _AttitudeEvaluationScreen extends StatefulWidget {
+  const _AttitudeEvaluationScreen({
     required this.rootContext,
     required this.formController,
     required this.editMode,
   });
-
-  static const route = '/attitude_evaluation';
 
   final BuildContext rootContext;
   final AttitudeEvaluationFormController formController;
   final bool editMode;
 
   @override
-  State<AttitudeEvaluationScreen> createState() =>
+  State<_AttitudeEvaluationScreen> createState() =>
       _AttitudeEvaluationScreenState();
 }
 
-class _AttitudeEvaluationScreenState extends State<AttitudeEvaluationScreen> {
+class _AttitudeEvaluationScreenState extends State<_AttitudeEvaluationScreen> {
   final _scrollController = ScrollController();
 
   int _currentStep = 0;
@@ -170,16 +286,10 @@ class _AttitudeEvaluationScreenState extends State<AttitudeEvaluationScreen> {
 
     widget.formController.setWereAtMeeting();
 
-    final internships = InternshipsProvider.of(context, listen: false);
-    final internship = internships.fromId(widget.formController.internshipId);
-
-    internship.attitudeEvaluations.add(
-      widget.formController.toInternshipEvaluation(),
-    );
-
     _logger.fine('Attitude evaluation form submitted successfully');
     if (!widget.rootContext.mounted) return;
-    Navigator.of(widget.rootContext).pop(internship);
+    Navigator.of(widget.rootContext)
+        .pop(widget.formController.toInternshipEvaluation());
   }
 
   Widget _controlBuilder(BuildContext context, ControlsDetails details) {

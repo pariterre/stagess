@@ -295,19 +295,37 @@ class _StudentInternshipListViewState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      InternshipDetails(
-                          key: detailKeys[internship.id],
-                          internshipId: internship.id),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: InternshipDetails(
+                            key: detailKeys[internship.id],
+                            internshipId: internship.id),
+                      ),
                       Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
-                      EvaluationSst(internshipId: internship.id),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: EvaluationSst(internshipId: internship.id),
+                      ),
                       Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
-                      EvaluationSkill(internshipId: internship.id),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: EvaluationSkill(internshipId: internship.id),
+                      ),
                       Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
-                      EvaluationAttitude(internshipId: internship.id),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: EvaluationAttitude(internshipId: internship.id),
+                      ),
                       Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
-                      EvaluationPost(internshipId: internship.id),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: EvaluationPost(internshipId: internship.id),
+                      ),
                       Divider(height: 4.0, indent: 4.0, endIndent: 24.0),
-                      InternshipVisa(internshipId: internship.id),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: InternshipVisa(internshipId: internship.id),
+                      ),
                     ],
                   ),
                 ),

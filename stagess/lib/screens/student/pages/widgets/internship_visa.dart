@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:stagess/common/widgets/itemized_text.dart';
-import 'package:stagess/screens/internship_forms/student_steps/visa_evaluation_form_controller.dart';
 import 'package:stagess/screens/internship_forms/student_steps/visa_evaluation_screen.dart';
 import 'package:stagess_common/models/internships/internship_evaluation_visa.dart';
 import 'package:stagess_common_flutter/providers/internships_provider.dart';
@@ -142,7 +141,7 @@ class _InternshipVisaState extends State<InternshipVisa> {
       padding: const EdgeInsets.only(bottom: _interline),
       child: Center(
         child: OutlinedButton(
-          onPressed: () => showVisaEvaluationDialog(
+          onPressed: () => showVisaEvaluationFormDialog(
             context: context,
             formController: VisaEvaluationFormController.fromInternshipId(
               context,

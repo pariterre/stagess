@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:stagess/screens/internship_forms/student_steps/attitude_evaluation_form_controller.dart';
+import 'package:stagess/screens/internship_forms/student_steps/attitude_evaluation_form_dialog.dart';
 import 'package:stagess_common/models/internships/internship_evaluation_attitude.dart';
 
 final _logger = Logger('GenerateAttitudePdf');
@@ -15,9 +15,11 @@ final _textStyleBold = pw.TextStyle(font: pw.Font.timesBold());
 
 Future<Uint8List> generateAttitudeEvaluationPdf(
     BuildContext context, PdfPageFormat format,
-    {required AttitudeEvaluationFormController controller}) async {
+    {required String internshipId, required int evaluationIndex}) async {
   _logger.info(
-      'Generating attitude evaluation PDF for internship: ${controller.internshipId}');
+      'Generating attitude evaluation PDF for internship: $internshipId, evaluationIndex: $evaluationIndex');
+  final controller = AttitudeEvaluationFormController.fromInternshipId(context,
+      internshipId: internshipId, evaluationIndex: evaluationIndex);
 
   final document = pw.Document(pageMode: PdfPageMode.outlines);
 

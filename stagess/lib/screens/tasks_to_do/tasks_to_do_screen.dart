@@ -9,7 +9,7 @@ import 'package:stagess/common/widgets/main_drawer.dart';
 import 'package:stagess/common/widgets/sub_title.dart';
 import 'package:stagess/router.dart';
 import 'package:stagess/screens/internship_forms/enterprise_steps/enterprise_evaluation_screen.dart';
-import 'package:stagess/screens/sst_evaluation_form/sst_evaluation_form_screen.dart';
+import 'package:stagess/screens/internship_forms/student_steps/sst_evaluation_form_screen.dart';
 import 'package:stagess_common/models/enterprises/enterprise.dart';
 import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/persons/student.dart';
@@ -45,8 +45,7 @@ List<_EnterpriseInternshipStudent> _sstToEvaluate(BuildContext context) {
 
   List<_EnterpriseInternshipStudent> out = [];
   for (final internship in internships) {
-    final isSstNotFilled = internship.sstEvaluation == null;
-    if (isSstNotFilled &&
+    if (internship.sstEvaluations.isEmpty &&
         internship.supervisingTeacherIds.contains(teacherId)) {
       final enterprise =
           enterprises.firstWhereOrNull((e) => e.id == internship.enterpriseId);

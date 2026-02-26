@@ -33,7 +33,6 @@ DROP TABLE IF EXISTS enterprise_job_pre_internship_requests;
 DROP TABLE IF EXISTS enterprise_job_uniforms;
 DROP TABLE IF EXISTS enterprise_job_protections;
 DROP TABLE IF EXISTS enterprise_job_incidents;
-DROP TABLE IF EXISTS enterprise_job_sst_evaluation_questions;
 DROP TABLE IF EXISTS enterprises;
 
 DROP TABLE IF EXISTS internship_supervising_teachers;
@@ -51,7 +50,7 @@ DROP TABLE IF EXISTS internship_attitude_evaluation_persons;
 DROP TABLE IF EXISTS internship_attitude_evaluation_items;
 DROP TABLE IF EXISTS internship_visa_evaluations;
 DROP TABLE IF EXISTS internship_visa_evaluation_items;
-DROP TABLE IF EXISTS internship_sst_evaluation_info;
+DROP TABLE IF EXISTS internship_sst_evaluations;
 DROP TABLE IF EXISTS internship_sst_evaluation_questions;
 DROP TABLE IF EXISTS internship_sst_evaluation_persons;
 DROP TABLE IF EXISTS post_internship_enterprise_evaluations;
@@ -62,6 +61,11 @@ DROP TABLE IF EXISTS teachers_visiting_priorities;
 
 DROP TABLE IF EXISTS schools;
 DROP TABLE IF EXISTS school_boards;
+
+/* OLD TABLES */
+DROP TABLE IF EXISTS enterprise_job_sst_evaluation_questions;
+DROP TABLE IF EXISTS internship_sst_evaluation_info;
+/**************/
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -515,23 +519,24 @@ CREATE TABLE internship_visa_evaluation_items (
     FOREIGN KEY (evaluation_id) REFERENCES internship_visa_evaluations(id) ON DELETE CASCADE
 );
 
-CREATE TABLE internship_sst_evaluation_info(
+CREATE TABLE internship_sst_evaluations(
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
     internship_id VARCHAR(36) NOT NULL,
     date BIGINT NOT NULL,
     FOREIGN KEY (internship_id) REFERENCES internships(id) ON DELETE CASCADE
 );
 
 CREATE TABLE internship_sst_evaluation_persons (
-    internship_id VARCHAR(36) NOT NULL,
+    evaluation_id VARCHAR(36) NOT NULL,
     person_name VARCHAR(100) NOT NULL,
-    FOREIGN KEY (internship_id) REFERENCES internships(id) ON DELETE CASCADE
+    FOREIGN KEY (evaluation_id) REFERENCES internship_sst_evaluations(id) ON DELETE CASCADE
 );
 
 CREATE TABLE internship_sst_evaluation_questions(
-    internship_id VARCHAR(36) NOT NULL,
+    evaluation_id VARCHAR(36) NOT NULL,
     question VARCHAR(255) NOT NULL,
     answers VARCHAR(2000) NOT NULL,
-    FOREIGN KEY (internship_id) REFERENCES internships(id) ON DELETE CASCADE
+    FOREIGN KEY (evaluation_id) REFERENCES internship_sst_evaluations(id) ON DELETE CASCADE
 );
 
 CREATE TABLE post_internship_enterprise_evaluations (

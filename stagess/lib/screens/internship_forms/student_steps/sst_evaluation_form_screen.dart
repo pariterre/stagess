@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stagess/common/widgets/dialogs/show_pdf_dialog.dart';
 import 'package:stagess/common/widgets/form_fields/text_with_form.dart';
 import 'package:stagess/common/widgets/itemized_text.dart';
 import 'package:stagess/common/widgets/sub_title.dart';
 import 'package:stagess/misc/question_file_service.dart';
-import 'package:stagess/screens/student/pages/pdf/sst_pdf_template.dart';
 import 'package:stagess_common/models/generic/fetchable_fields.dart';
 import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/internships/sst_evaluation.dart';
@@ -14,7 +12,6 @@ import 'package:stagess_common_flutter/helpers/form_service.dart';
 import 'package:stagess_common_flutter/helpers/responsive_service.dart';
 import 'package:stagess_common_flutter/providers/enterprises_provider.dart';
 import 'package:stagess_common_flutter/providers/internships_provider.dart';
-import 'package:stagess_common_flutter/providers/students_provider.dart';
 import 'package:stagess_common_flutter/widgets/checkbox_with_other.dart';
 import 'package:stagess_common_flutter/widgets/confirm_exit_dialog.dart';
 import 'package:stagess_common_flutter/widgets/radio_with_follow_up.dart';
@@ -22,21 +19,23 @@ import 'package:stagess_common_flutter/widgets/show_snackbar.dart';
 
 final _logger = Logger('SstEvaluationFormScreen');
 
-Future<Internship?> showSstEvaluationFormDialog(
+Future<void> showSstEvaluationFormDialog(
   BuildContext context, {
   required String internshipId,
+  int? evaluationIndex,
 }) async {
   _logger.info('Showing SstEvaluationFormDialog for internship: $internshipId');
   final internships = InternshipsProvider.of(context, listen: false);
   await internships.fetchData(id: internshipId, fields: FetchableFields.all);
-  if (!context.mounted) return null;
+  if (!context.mounted) return;
 
+  final internship = internships.fromId(internshipId);
   final hasLock = await showDialog(
     context: context,
     barrierDismissible: false,
     builder: (context) => FutureBuilder(
       future: Future.wait([
-        internships.getLockForItem(internships[internshipId]),
+        internships.getLockForItem(internship),
         internships.fetchData(id: internshipId, fields: FetchableFields.all),
       ]),
       builder: (context, snapshot) {
@@ -70,16 +69,16 @@ Future<Internship?> showSstEvaluationFormDialog(
             'Impossible de modifier le formulaire, car il est en cours de modification par un autre utilisateur.',
       );
     }
-    return null;
+    return;
   }
 
-  final editedInternship = await showDialog<Internship>(
+  final newEvaluation = await showDialog<SstEvaluation>(
     context: context,
     barrierDismissible: false,
     builder: (context) => Navigator(
       onGenerateRoute: (settings) => MaterialPageRoute(
         builder: (ctx) => Dialog(
-          child: SstEvaluationFormScreen(
+          child: _SstEvaluationFormScreen(
             rootContext: context,
             internshipId: internshipId,
           ),
@@ -88,41 +87,33 @@ Future<Internship?> showSstEvaluationFormDialog(
     ),
   );
 
-  final isSuccess = editedInternship != null &&
-      await internships.replaceWithConfirmation(editedInternship);
-  await internships.releaseLockForItem(internships[internshipId]);
+  final isSuccess = newEvaluation != null &&
+      await internships.replaceWithConfirmation(
+          Internship.fromSerialized(internship.serialize())
+            ..sstEvaluations.add(newEvaluation));
+  await internships.releaseLockForItem(internship);
 
   if (isSuccess && context.mounted) {
-    final enterprise = EnterprisesProvider.of(context, listen: false)
-        .fromId(editedInternship.enterpriseId);
-    final student = StudentsProvider.of(context, listen: false)
-        .fromId(editedInternship.studentId);
-
-    showSnackBar(context,
-        message: 'L\'évaluation SST a bien été enregistrée pour '
-            'l\'élève ${student.fullName} dans l\'entreprise ${enterprise.name}.');
+    showSnackBar(context, message: 'L\'évaluation SST a bien été enregistrée.');
   }
-  return editedInternship;
+  return;
 }
 
-class SstEvaluationFormScreen extends StatefulWidget {
-  const SstEvaluationFormScreen({
-    super.key,
+class _SstEvaluationFormScreen extends StatefulWidget {
+  const _SstEvaluationFormScreen({
     required this.rootContext,
     required this.internshipId,
   });
-
-  static const route = '/sst-evaluation-form';
 
   final BuildContext rootContext;
   final String internshipId;
 
   @override
-  State<SstEvaluationFormScreen> createState() =>
+  State<_SstEvaluationFormScreen> createState() =>
       _SstEvaluationFormScreenState();
 }
 
-class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
+class _SstEvaluationFormScreenState extends State<_SstEvaluationFormScreen> {
   final _questionsKey = GlobalKey<_QuestionsStepState>();
   late final wereAtMeetingController = CheckboxWithOtherController<String>(
     elements: [
@@ -131,23 +122,11 @@ class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
     ],
     initialValues: InternshipsProvider.of(context, listen: false)
             .fromId(widget.internshipId)
-            .sstEvaluation
+            .sstEvaluations
+            .lastOrNull
             ?.presentAtEvaluation ??
         [],
   );
-
-  Internship get _editedInternship {
-    final internships = InternshipsProvider.of(context, listen: false);
-
-    final internship = Internship.fromSerialized(
-        internships.fromId(widget.internshipId).serialize());
-    internship.sstEvaluation ??= SstEvaluation.empty;
-
-    internship.sstEvaluation!.update(
-        presentAtEvaluation: wereAtMeetingController.values,
-        questions: _questionsKey.currentState!.answer);
-    return internship;
-  }
 
   void _submit() {
     _logger.info(
@@ -160,13 +139,13 @@ class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
 
     _questionsKey.currentState!.formKey.currentState!.save();
 
-    final internship = _editedInternship;
-
     _logger.fine(
       'SstEvaluationFormScreen submitted successfully for internshipId: ${widget.internshipId}',
     );
     if (!widget.rootContext.mounted) return;
-    Navigator.of(widget.rootContext).pop(internship);
+    Navigator.of(widget.rootContext).pop(SstEvaluation(
+        presentAtEvaluation: wereAtMeetingController.values,
+        questions: _questionsKey.currentState!.answer));
   }
 
   void _cancel() async {
@@ -321,7 +300,8 @@ class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
                   child: SingleChildScrollView(
                     child: _QuestionsStep(
                         key: _questionsKey,
-                        initialSstEvaluation: internship.sstEvaluation,
+                        initialSstEvaluation:
+                            internship.sstEvaluations.lastOrNull,
                         wereAtMeetingController: wereAtMeetingController,
                         enterpriseId: internship.enterpriseId,
                         jobId: internship.jobId),
@@ -345,19 +325,6 @@ class _SstEvaluationFormScreenState extends State<SstEvaluationFormScreen> {
           OutlinedButton(onPressed: _cancel, child: const Text('Annuler')),
           const SizedBox(width: 20),
           TextButton(onPressed: _submit, child: const Text('Enregistrer')),
-          IconButton(
-              onPressed: () {
-                showPdfDialog(
-                  context,
-                  pdfGeneratorCallback: (context, format) => generateSstPdf(
-                      context, format,
-                      internship: _editedInternship),
-                );
-              },
-              icon: Icon(
-                Icons.picture_as_pdf,
-                color: Theme.of(context).colorScheme.primary,
-              ))
         ],
       ),
     );

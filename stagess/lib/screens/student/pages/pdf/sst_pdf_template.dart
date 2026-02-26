@@ -9,21 +9,30 @@ import 'package:stagess/misc/question_file_service.dart';
 import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/internships/sst_evaluation.dart';
 import 'package:stagess_common_flutter/providers/enterprises_provider.dart';
+import 'package:stagess_common_flutter/providers/internships_provider.dart';
 
-final _logger = Logger('GenerateSstPdf');
+final _logger = Logger('GenerateSstEvaluationPdf');
 
 final _textStyle = pw.TextStyle(font: pw.Font.times());
 final _textStyleBold = pw.TextStyle(font: pw.Font.timesBold());
 final _textStyleBoldItalic = pw.TextStyle(font: pw.Font.timesBoldItalic());
 
-Future<Uint8List> generateSstPdf(BuildContext context, PdfPageFormat format,
-    {required Internship internship}) async {
+Future<Uint8List> generateSstEvaluationPdf(
+    BuildContext context, PdfPageFormat format,
+    {required String internshipId, required int evaluationIndex}) async {
   _logger.info(
-      'Generating SST PDF for evaluation: ${internship.sstEvaluation?.id}');
-  if (internship.sstEvaluation == null) {
-    _logger.warning('No SST evaluation found for internship ${internship.id}');
+      'Generating SST PDF for evaluation: $evaluationIndex of internship: $internshipId');
+  final internship =
+      InternshipsProvider.of(context, listen: false).fromId(internshipId);
+
+  if (evaluationIndex < 0 ||
+      evaluationIndex >= internship.sstEvaluations.length) {
+    _logger.warning(
+        'No SST evaluation found for internship ${internship.id} with evaluation index $evaluationIndex');
     return Uint8List(0);
   }
+
+  final evaluation = internship.sstEvaluations[evaluationIndex];
 
   final document = pw.Document(pageMode: PdfPageMode.outlines);
 
@@ -38,9 +47,10 @@ Future<Uint8List> generateSstPdf(BuildContext context, PdfPageFormat format,
     pw.MultiPage(
       build: (pw.Context ctx) => [
         pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-          _buildPersonsPresent(internship: internship),
+          _buildPersonsPresent(internship: internship, evaluation: evaluation),
           pw.Text('Questions', style: _textStyleBold),
-          _buildQuestions(context, internship: internship),
+          _buildQuestions(context,
+              internship: internship, evaluation: evaluation),
           pw.SizedBox(height: 24),
         ])
       ],
@@ -52,8 +62,8 @@ Future<Uint8List> generateSstPdf(BuildContext context, PdfPageFormat format,
 
 pw.Widget _buildPersonsPresent({
   required Internship internship,
+  required SstEvaluation evaluation,
 }) {
-  final evaluation = internship.sstEvaluation!;
   return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
     pw.Text(
         'Personnes présentes à l\'évaluation du ${DateFormat(
@@ -70,7 +80,7 @@ pw.Widget _buildPersonsPresent({
 }
 
 pw.Widget _buildQuestions(BuildContext context,
-    {required Internship internship}) {
+    {required Internship internship, required SstEvaluation evaluation}) {
   final enterprise = EnterprisesProvider.of(context, listen: false)
       .fromId(internship.enterpriseId);
   final job = enterprise.jobs.fromId(internship.jobId);
@@ -80,7 +90,6 @@ pw.Widget _buildQuestions(BuildContext context,
   final questions =
       questionIds.map((e) => QuestionFileService.fromId(e)).toList();
 
-  final evaluation = internship.sstEvaluation!;
   return pw.ListView.builder(
       itemCount: questions.length,
       itemBuilder: (ctx, index) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:stagess/common/widgets/dialogs/show_pdf_dialog.dart';
-import 'package:stagess/screens/internship_forms/student_steps/skill_evaluation_main_screen.dart';
+import 'package:stagess/screens/internship_forms/student_steps/skill_evaluation_form_dialog.dart';
 import 'package:stagess/screens/student/pages/pdf/skill_pdf_template.dart';
 import 'package:stagess/screens/student/pages/widgets/internship_evaluation_card.dart';
 import 'package:stagess_common_flutter/providers/internships_provider.dart';
@@ -25,6 +25,8 @@ class EvaluationSkill extends StatelessWidget {
     return InternshipEvaluationCard(
         title: 'C1. Compétences spécifiques du métier',
         internshipId: internshipId,
+        evaluateButtonText: 'Évaluer l\'élève',
+        reevaluateButtonText: 'Évaluer de nouveau',
         evaluations: InternshipsProvider.of(context, listen: true)
             .fromId(internshipId)
             .skillEvaluations,
