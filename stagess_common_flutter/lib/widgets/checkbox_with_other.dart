@@ -62,6 +62,10 @@ class CheckboxWithOtherController<T> {
     }
   }
 
+  void dispose() {
+    _otherTextController.dispose();
+  }
+
   ///
   /// This returns all the element in the form of a list of String
   List<String> get values {

@@ -9,6 +9,7 @@ class LowHighSliderFormField extends FormField<double> {
     this.fixed = false,
     int decimal = 0,
     super.onSaved,
+    this.onChanged,
     this.min = 1,
     this.max = 5,
     this.lowLabel = 'Faible',
@@ -22,6 +23,7 @@ class LowHighSliderFormField extends FormField<double> {
   final int min;
   final int max;
   final bool fixed; // We use true for enables so we have the active colors
+  final Function(double)? onChanged;
 
   static Widget _builder(FormFieldState<double> state) {
     final fixed = (state.widget as LowHighSliderFormField).fixed;
@@ -30,6 +32,7 @@ class LowHighSliderFormField extends FormField<double> {
     final highLabel = (state.widget as LowHighSliderFormField).highLabel;
     final min = (state.widget as LowHighSliderFormField).min;
     final max = (state.widget as LowHighSliderFormField).max;
+    final onChanged = (state.widget as LowHighSliderFormField).onChanged;
 
     if (state.value! < min || state.value! > max) {
       return const Text('Aucune donnée pour l\'instant.');
@@ -43,8 +46,11 @@ class LowHighSliderFormField extends FormField<double> {
           Expanded(
             child: Slider(
               value: state.value! * factor,
-              onChanged: (value) =>
-                  fixed ? null : state.didChange(value / factor),
+              onChanged: (value) {
+                if (fixed) return;
+                state.didChange(value / factor);
+                if (onChanged != null) onChanged(value / factor);
+              },
               min: (min * factor).toDouble(),
               max: (max * factor).toDouble(),
               divisions: (max - min) * factor.toInt(),

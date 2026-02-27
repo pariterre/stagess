@@ -17,6 +17,8 @@ class EvaluationAttitude extends StatelessWidget {
   Widget build(BuildContext context) {
     _logger.finer('Building AttitudeEvaluation for internship: $internshipId');
 
+    // TODO : Add control buttons to stick to bottom (and standardize to other forms)
+    // TODO : Remove cancel button and permit close if cannot modify
     return InternshipEvaluationCard(
         title: 'C2. Attitudes et comportements',
         internshipId: internshipId,

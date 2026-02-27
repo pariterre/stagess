@@ -6,7 +6,7 @@ import 'package:stagess/common/provider_helpers/students_helpers.dart';
 import 'package:stagess/common/widgets/form_fields/low_high_slider_form_field.dart';
 import 'package:stagess/common/widgets/itemized_text.dart';
 import 'package:stagess/common/widgets/rating_bar_tile.dart';
-import 'package:stagess/screens/internship_forms/enterprise_steps/supervision_step.dart';
+import 'package:stagess/screens/internship_forms/student_steps/enterprise_evaluation_form_enums.dart';
 import 'package:stagess_common/models/enterprises/job.dart';
 import 'package:stagess_common/models/internships/post_internship_enterprise_evaluation.dart';
 import 'package:stagess_common/models/persons/student.dart';
@@ -315,8 +315,8 @@ class _SupervisionBodyState extends State<_SupervisionBody> {
     return _TitledFixSlider(
       title: 'Niveau d\'autonomie souhaité',
       value: _meanOf(evaluations, (e) => e.autonomyExpected),
-      lowLabel: labelAutonomyExpected[0],
-      highLabel: labelAutonomyExpected[1],
+      lowLabel: AutonomyExpected.low.label,
+      highLabel: AutonomyExpected.high.label,
     );
   }
 
@@ -325,8 +325,8 @@ class _SupervisionBodyState extends State<_SupervisionBody> {
     return _TitledFixSlider(
       title: 'Rendement de l\'élève attendu',
       value: _meanOf(evaluations, (e) => e.efficiencyExpected),
-      lowLabel: labelEfficiencyExpected[0],
-      highLabel: labelEfficiencyExpected[1],
+      lowLabel: EfficiencyExpected.low.label,
+      highLabel: EfficiencyExpected.high.label,
     );
   }
 
@@ -335,8 +335,8 @@ class _SupervisionBodyState extends State<_SupervisionBody> {
     return _TitledFixSlider(
       title: 'Type d\'encadrement',
       value: _meanOf(evaluations, (e) => e.supervisionStyle),
-      lowLabel: labelSupervisionStyle[0],
-      highLabel: labelSupervisionStyle[1],
+      lowLabel: SupervisionStyle.low.label,
+      highLabel: SupervisionStyle.high.label,
     );
   }
 
@@ -345,8 +345,8 @@ class _SupervisionBodyState extends State<_SupervisionBody> {
     return _TitledFixSlider(
       title: 'Communication avec l\'entreprise',
       value: _meanOf(evaluations, (e) => e.easeOfCommunication),
-      lowLabel: labelEaseOfCommunication[0],
-      highLabel: labelEaseOfCommunication[1],
+      lowLabel: EaseOfCommunication.low.label,
+      highLabel: EaseOfCommunication.high.label,
     );
   }
 
@@ -356,8 +356,8 @@ class _SupervisionBodyState extends State<_SupervisionBody> {
       title:
           'Tolérance du milieu à l\'égard des retards et absences de l\'élève',
       value: _meanOf(evaluations, (e) => e.absenceAcceptance),
-      lowLabel: labelAbsenceAcceptance[0],
-      highLabel: labelAbsenceAcceptance[1],
+      lowLabel: AbsenceAcceptance.low.label,
+      highLabel: AbsenceAcceptance.high.label,
     );
   }
 }

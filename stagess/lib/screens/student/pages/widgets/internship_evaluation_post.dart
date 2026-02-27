@@ -25,12 +25,15 @@ class EvaluationPost extends StatelessWidget {
         evaluations: InternshipsProvider.of(context)
             .fromId(internshipId)
             .enterpriseEvaluations,
-        onClickedNewEvaluation: () => showEnterpriseEvaluationFormDialog(
+        onClickedNewEvaluation: () => showInternshipEvaluationFormDialog(
             context,
-            internshipId: internshipId),
+            internshipId: internshipId,
+            showEvaluationDialog: showEnterpriseEvaluationFormDialog),
         onClickedShowEvaluation: (evaluationId) =>
-            showEnterpriseEvaluationFormDialog(context,
-                internshipId: internshipId, evaluationId: evaluationId),
+            showInternshipEvaluationFormDialog(context,
+                internshipId: internshipId,
+                evaluationId: evaluationId,
+                showEvaluationDialog: showEnterpriseEvaluationFormDialog),
         onClickedShowEvaluationPdf: (evaluationId) => showPdfDialog(
               context,
               pdfGeneratorCallback: (context, format) =>

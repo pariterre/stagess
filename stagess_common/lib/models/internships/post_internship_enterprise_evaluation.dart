@@ -201,7 +201,7 @@ class PostInternshipEnterpriseEvaluation extends InternshipEvaluation {
 
   static FetchableFields get fetchableFields => FetchableFields.reference({
         'id': FetchableFields.mandatory,
-        'date': FetchableFields.mandatory,
+        'date': FetchableFields.optional,
         'internship_id': FetchableFields.mandatory,
         'skills_required': FetchableFields.optional,
         'task_variety': FetchableFields.optional,
