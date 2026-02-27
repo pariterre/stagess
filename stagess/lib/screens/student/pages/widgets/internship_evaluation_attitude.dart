@@ -15,9 +15,7 @@ class EvaluationAttitude extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _logger.finer(
-      'Building AttitudeEvaluation for internship: $internshipId',
-    );
+    _logger.finer('Building AttitudeEvaluation for internship: $internshipId');
 
     return InternshipEvaluationCard(
         title: 'C2. Attitudes et comportements',
@@ -27,12 +25,15 @@ class EvaluationAttitude extends StatelessWidget {
         evaluations: InternshipsProvider.of(context, listen: true)
             .fromId(internshipId)
             .attitudeEvaluations,
-        onClickedNewEvaluation: () =>
-            showAttitudeEvaluationDialog(context, internshipId: internshipId),
-        onClickedShowEvaluation: (evaluationId) => showAttitudeEvaluationDialog(
+        onClickedNewEvaluation: () => showInternshipEvaluationFormDialog(
             context,
             internshipId: internshipId,
-            evaluationId: evaluationId),
+            showEvaluationDialog: showAttitudeEvaluationDialog),
+        onClickedShowEvaluation: (evaluationId) =>
+            showInternshipEvaluationFormDialog(context,
+                internshipId: internshipId,
+                evaluationId: evaluationId,
+                showEvaluationDialog: showAttitudeEvaluationDialog),
         onClickedShowEvaluationPdf: (evaluationId) => showPdfDialog(
               context,
               pdfGeneratorCallback: (context, format) =>
