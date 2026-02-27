@@ -9,7 +9,7 @@ import 'package:stagess/screens/internship_forms/student_steps/skill_evaluation_
 import 'package:stagess_common/models/internships/task_appreciation.dart';
 import 'package:stagess_common/services/job_data_file_service.dart';
 
-final _logger = Logger('GenerateAttitudePdf');
+final _logger = Logger('GenerateSkillEvaluationPdf');
 
 final _textStyle = pw.TextStyle(font: pw.Font.times());
 final _textStyleBold = pw.TextStyle(font: pw.Font.timesBold());
@@ -17,13 +17,13 @@ final _textStyleBoldItalic = pw.TextStyle(font: pw.Font.timesBoldItalic());
 
 Future<Uint8List> generateSkillEvaluationPdf(
     BuildContext context, PdfPageFormat format,
-    {required String internshipId, required int evaluationIndex}) async {
+    {required String internshipId, required String evaluationId}) async {
   _logger.info('Generating skill evaluation PDF for internship: $internshipId');
 
   final controller = SkillEvaluationFormController.fromInternshipId(
     context,
     internshipId: internshipId,
-    evaluationIndex: evaluationIndex,
+    evaluationId: evaluationId,
     canModify: false,
   );
 

@@ -9,7 +9,7 @@ final _logger = Logger('GenerateEnterpriseEvaluationPdf');
 
 Future<Uint8List> generateEnterpriseEvaluationPdf(
     BuildContext context, PdfPageFormat format,
-    {required String internshipId, int? evaluationIndex}) async {
+    {required String internshipId, required String evaluationId}) async {
   _logger.info(
       'Generating enterprise evaluation PDF for internship: $internshipId');
 

@@ -15,11 +15,11 @@ final _textStyleBold = pw.TextStyle(font: pw.Font.timesBold());
 
 Future<Uint8List> generateAttitudeEvaluationPdf(
     BuildContext context, PdfPageFormat format,
-    {required String internshipId, required int evaluationIndex}) async {
+    {required String internshipId, required String evaluationId}) async {
   _logger.info(
-      'Generating attitude evaluation PDF for internship: $internshipId, evaluationIndex: $evaluationIndex');
+      'Generating attitude evaluation PDF for internship: $internshipId, evaluationId: $evaluationId');
   final controller = AttitudeEvaluationFormController.fromInternshipId(context,
-      internshipId: internshipId, evaluationIndex: evaluationIndex);
+      internshipId: internshipId, evaluationId: evaluationId);
 
   final document = pw.Document(pageMode: PdfPageMode.outlines);
 

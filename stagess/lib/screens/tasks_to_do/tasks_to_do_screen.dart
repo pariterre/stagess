@@ -10,6 +10,7 @@ import 'package:stagess/common/widgets/sub_title.dart';
 import 'package:stagess/router.dart';
 import 'package:stagess/screens/internship_forms/student_steps/enterprise_evaluation_form_dialog.dart';
 import 'package:stagess/screens/internship_forms/student_steps/sst_evaluation_form_screen.dart';
+import 'package:stagess/screens/student/pages/widgets/internship_evaluation_card.dart';
 import 'package:stagess_common/models/enterprises/enterprise.dart';
 import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/persons/student.dart';
@@ -235,8 +236,9 @@ class _SstRisk extends StatelessWidget {
                   iconColor: Theme.of(context).colorScheme.secondary,
                   date: internship.dates.start,
                   buttonTitle: 'Remplir le\nquestionnaire SST',
-                  onTap: () => showSstEvaluationFormDialog(context,
-                      internshipId: internship.id),
+                  onTap: () => showInternshipEvaluationFormDialog(context,
+                      internshipId: internship.id,
+                      showEvaluationDialog: showSstEvaluationFormDialog),
                 );
               })),
       ],

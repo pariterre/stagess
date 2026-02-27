@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class TextWithForm extends StatelessWidget {
   const TextWithForm({
     required this.title,
+    this.enabled,
     this.titleStyle,
     this.controller,
     this.initialValue,
@@ -13,6 +14,7 @@ class TextWithForm extends StatelessWidget {
   });
 
   final String title;
+  final bool? enabled;
   final TextStyle? titleStyle;
   final TextEditingController? controller;
   final String? initialValue;
@@ -31,6 +33,7 @@ class TextWithForm extends StatelessWidget {
         ),
         TextFormField(
           controller: controller,
+          enabled: enabled,
           initialValue: initialValue,
           onChanged: onChanged,
           onSaved: onSaved,

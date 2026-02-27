@@ -5,9 +5,9 @@ import 'package:stagess/common/widgets/form_fields/text_with_form.dart';
 import 'package:stagess/common/widgets/itemized_text.dart';
 import 'package:stagess/common/widgets/sub_title.dart';
 import 'package:stagess/misc/question_file_service.dart';
-import 'package:stagess_common/models/generic/fetchable_fields.dart';
 import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/internships/sst_evaluation.dart';
+import 'package:stagess_common/utils.dart';
 import 'package:stagess_common_flutter/helpers/form_service.dart';
 import 'package:stagess_common_flutter/helpers/responsive_service.dart';
 import 'package:stagess_common_flutter/providers/enterprises_provider.dart';
@@ -15,63 +15,14 @@ import 'package:stagess_common_flutter/providers/internships_provider.dart';
 import 'package:stagess_common_flutter/widgets/checkbox_with_other.dart';
 import 'package:stagess_common_flutter/widgets/confirm_exit_dialog.dart';
 import 'package:stagess_common_flutter/widgets/radio_with_follow_up.dart';
-import 'package:stagess_common_flutter/widgets/show_snackbar.dart';
 
 final _logger = Logger('SstEvaluationFormScreen');
 
-Future<void> showSstEvaluationFormDialog(
+Future<Internship?> showSstEvaluationFormDialog(
   BuildContext context, {
   required String internshipId,
-  int? evaluationIndex,
+  String? evaluationId,
 }) async {
-  _logger.info('Showing SstEvaluationFormDialog for internship: $internshipId');
-  final internships = InternshipsProvider.of(context, listen: false);
-  await internships.fetchData(id: internshipId, fields: FetchableFields.all);
-  if (!context.mounted) return;
-
-  final internship = internships.fromId(internshipId);
-  final hasLock = await showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => FutureBuilder(
-      future: Future.wait([
-        internships.getLockForItem(internship),
-        internships.fetchData(id: internshipId, fields: FetchableFields.all),
-      ]),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final hasLock = (snapshot.data as List).first as bool;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.of(context).pop(hasLock);
-          });
-        }
-        return Dialog(
-          child: SizedBox(
-            width: 100,
-            height: 100,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-        );
-      },
-    ),
-  );
-
-  if (!hasLock || !context.mounted) {
-    _logger.warning('Could not get lock for internshipId: $internshipId');
-    if (context.mounted) {
-      showSnackBar(
-        context,
-        message:
-            'Impossible de modifier le formulaire, car il est en cours de modification par un autre utilisateur.',
-      );
-    }
-    return;
-  }
-
   final newEvaluation = await showDialog<SstEvaluation>(
     context: context,
     barrierDismissible: false,
@@ -81,32 +32,30 @@ Future<void> showSstEvaluationFormDialog(
           child: _SstEvaluationFormScreen(
             rootContext: context,
             internshipId: internshipId,
+            evaluationId: evaluationId,
           ),
         ),
       ),
     ),
   );
+  if (newEvaluation == null || !context.mounted) return null;
 
-  final isSuccess = newEvaluation != null &&
-      await internships.replaceWithConfirmation(
-          Internship.fromSerialized(internship.serialize())
-            ..sstEvaluations.add(newEvaluation));
-  await internships.releaseLockForItem(internship);
-
-  if (isSuccess && context.mounted) {
-    showSnackBar(context, message: 'L\'évaluation SST a bien été enregistrée.');
-  }
-  return;
+  final internship =
+      InternshipsProvider.of(context, listen: false).fromId(internshipId);
+  return Internship.fromSerialized(internship.serialize())
+    ..sstEvaluations.add(newEvaluation);
 }
 
 class _SstEvaluationFormScreen extends StatefulWidget {
   const _SstEvaluationFormScreen({
     required this.rootContext,
     required this.internshipId,
+    this.evaluationId,
   });
 
   final BuildContext rootContext;
   final String internshipId;
+  final String? evaluationId;
 
   @override
   State<_SstEvaluationFormScreen> createState() =>
@@ -114,18 +63,27 @@ class _SstEvaluationFormScreen extends StatefulWidget {
 }
 
 class _SstEvaluationFormScreenState extends State<_SstEvaluationFormScreen> {
+  bool get _editMode => widget.evaluationId == null;
+
   final _questionsKey = GlobalKey<_QuestionsStepState>();
   late final wereAtMeetingController = CheckboxWithOtherController<String>(
     elements: [
       'Stagiaire',
       'Responsable en milieu de stage',
     ],
-    initialValues: InternshipsProvider.of(context, listen: false)
-            .fromId(widget.internshipId)
-            .sstEvaluations
-            .lastOrNull
-            ?.presentAtEvaluation ??
-        [],
+    initialValues: widget.evaluationId == null
+        ? InternshipsProvider.of(context, listen: false)
+                .fromId(widget.internshipId)
+                .sstEvaluations
+                .lastOrNull
+                ?.presentAtEvaluation ??
+            []
+        : InternshipsProvider.of(context, listen: false)
+                .fromId(widget.internshipId)
+                .sstEvaluations
+                .firstWhereOrNull((e) => e.id == widget.evaluationId)
+                ?.presentAtEvaluation ??
+            [],
   );
 
   void _submit() {
@@ -149,6 +107,11 @@ class _SstEvaluationFormScreenState extends State<_SstEvaluationFormScreen> {
   }
 
   void _cancel() async {
+    if (!_editMode) {
+      Navigator.of(widget.rootContext).pop(null);
+      return;
+    }
+
     _logger.info(
         'Cancelling SstEvaluationFormScreen for internshipId: ${widget.internshipId}');
     final answer = await ConfirmExitDialog.show(
@@ -300,6 +263,7 @@ class _SstEvaluationFormScreenState extends State<_SstEvaluationFormScreen> {
                   child: SingleChildScrollView(
                     child: _QuestionsStep(
                         key: _questionsKey,
+                        editMode: _editMode,
                         initialSstEvaluation:
                             internship.sstEvaluations.lastOrNull,
                         wereAtMeetingController: wereAtMeetingController,
@@ -322,9 +286,15 @@ class _SstEvaluationFormScreenState extends State<_SstEvaluationFormScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          OutlinedButton(onPressed: _cancel, child: const Text('Annuler')),
-          const SizedBox(width: 20),
-          TextButton(onPressed: _submit, child: const Text('Enregistrer')),
+          if (_editMode)
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: OutlinedButton(
+                  onPressed: _cancel, child: const Text('Annuler')),
+            ),
+          TextButton(
+              onPressed: _submit,
+              child: Text(_editMode ? 'Enregistrer' : 'Fermer')),
         ],
       ),
     );
@@ -334,12 +304,14 @@ class _SstEvaluationFormScreenState extends State<_SstEvaluationFormScreen> {
 class _QuestionsStep extends StatefulWidget {
   const _QuestionsStep({
     super.key,
+    required this.editMode,
     required this.initialSstEvaluation,
     required this.wereAtMeetingController,
     required this.enterpriseId,
     required this.jobId,
   });
 
+  final bool editMode;
   final SstEvaluation? initialSstEvaluation;
   final CheckboxWithOtherController<String> wereAtMeetingController;
   final String enterpriseId;
@@ -401,6 +373,7 @@ class _QuestionsStepState extends State<_QuestionsStep> {
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: RadioWithFollowUp<String>(
                     title: '${index + 1}. ${question.question}',
+                    enabled: widget.editMode,
                     initialValue: widget
                         .initialSstEvaluation?.questions['Q${question.id}']?[0],
                     elements: question.choices!.toList(),
@@ -423,6 +396,7 @@ class _QuestionsStepState extends State<_QuestionsStep> {
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: CheckboxWithOther(
                     title: '${index + 1}. ${question.question}',
+                    enabled: widget.editMode,
                     controller: CheckboxWithOtherController(
                       elements: question.choices!.toList(),
                       hasNotApplicableOption: true,
@@ -449,6 +423,7 @@ class _QuestionsStepState extends State<_QuestionsStep> {
                   padding: const EdgeInsets.only(bottom: 36.0),
                   child: TextWithForm(
                     title: '${index + 1}. ${question.question}',
+                    enabled: widget.editMode,
                     initialValue: widget.initialSstEvaluation
                             ?.questions['Q${question.id}']?.first ??
                         '',
@@ -472,7 +447,7 @@ class _QuestionsStepState extends State<_QuestionsStep> {
           padding: const EdgeInsets.only(left: 24.0),
           child: CheckboxWithOther(
             controller: widget.wereAtMeetingController,
-            enabled: true,
+            enabled: widget.editMode,
           ),
         ),
       ],
@@ -489,6 +464,7 @@ class _QuestionsStepState extends State<_QuestionsStep> {
       padding: const EdgeInsets.only(bottom: 12.0),
       child: TextWithForm(
         controller: _followUpController['Q${question.id}+t'],
+        enabled: widget.editMode,
         title: question.followUpQuestion!,
         titleStyle: Theme.of(context).textTheme.bodyMedium,
         onChanged: (text) =>

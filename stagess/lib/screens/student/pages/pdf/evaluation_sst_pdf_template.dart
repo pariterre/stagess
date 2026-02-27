@@ -8,6 +8,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:stagess/misc/question_file_service.dart';
 import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/internships/sst_evaluation.dart';
+import 'package:stagess_common/utils.dart';
 import 'package:stagess_common_flutter/providers/enterprises_provider.dart';
 import 'package:stagess_common_flutter/providers/internships_provider.dart';
 
@@ -19,20 +20,19 @@ final _textStyleBoldItalic = pw.TextStyle(font: pw.Font.timesBoldItalic());
 
 Future<Uint8List> generateSstEvaluationPdf(
     BuildContext context, PdfPageFormat format,
-    {required String internshipId, required int evaluationIndex}) async {
+    {required String internshipId, required String evaluationId}) async {
   _logger.info(
-      'Generating SST PDF for evaluation: $evaluationIndex of internship: $internshipId');
+      'Generating SST PDF for evaluation: $evaluationId of internship: $internshipId');
   final internship =
       InternshipsProvider.of(context, listen: false).fromId(internshipId);
 
-  if (evaluationIndex < 0 ||
-      evaluationIndex >= internship.sstEvaluations.length) {
+  final evaluation =
+      internship.sstEvaluations.firstWhereOrNull((e) => e.id == evaluationId);
+  if (evaluation == null) {
     _logger.warning(
-        'No SST evaluation found for internship ${internship.id} with evaluation index $evaluationIndex');
+        'No SST evaluation found for internship ${internship.id} with evaluation id $evaluationId');
     return Uint8List(0);
   }
-
-  final evaluation = internship.sstEvaluations[evaluationIndex];
 
   final document = pw.Document(pageMode: PdfPageMode.outlines);
 

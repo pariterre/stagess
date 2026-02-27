@@ -26,17 +26,20 @@ class EvaluationSst extends StatelessWidget {
         evaluations: InternshipsProvider.of(context, listen: true)
             .fromId(internshipId)
             .sstEvaluations,
-        onClickedNewEvaluation: () =>
-            showSstEvaluationFormDialog(context, internshipId: internshipId),
-        onClickedShowEvaluation: (evaluationIndex) =>
-            showSstEvaluationFormDialog(context,
-                internshipId: internshipId, evaluationIndex: evaluationIndex),
-        onClickedShowEvaluationPdf: (evaluationIndex) => showPdfDialog(
+        onClickedNewEvaluation: () => showInternshipEvaluationFormDialog(
+            context,
+            internshipId: internshipId,
+            showEvaluationDialog: showSstEvaluationFormDialog),
+        onClickedShowEvaluation: (evaluationId) =>
+            showInternshipEvaluationFormDialog(context,
+                internshipId: internshipId,
+                evaluationId: evaluationId,
+                showEvaluationDialog: showSstEvaluationFormDialog),
+        onClickedShowEvaluationPdf: (evaluationId) => showPdfDialog(
               context,
               pdfGeneratorCallback: (context, format) =>
                   generateSstEvaluationPdf(context, format,
-                      internshipId: internshipId,
-                      evaluationIndex: evaluationIndex),
+                      internshipId: internshipId, evaluationId: evaluationId),
             ));
   }
 }

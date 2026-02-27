@@ -235,10 +235,9 @@ class MySqlInternshipsRepository extends InternshipsRepository {
             fieldsToFetch: ['id', 'date', 'form_version'],
             idNameToDataTable: 'internship_id',
           ),
-          // TODO Move this
           sqlInterface.selectSubquery(
             dataTableName: 'post_internship_enterprise_evaluations',
-            asName: 'enterprise_evaluation',
+            asName: 'enterprise_evaluations',
             fieldsToFetch: [
               'id',
               'internship_id',
@@ -264,7 +263,7 @@ class MySqlInternshipsRepository extends InternshipsRepository {
             dataTableName: 'internship_sst_evaluations',
             asName: 'sst_evaluations',
             idNameToDataTable: 'internship_id',
-            fieldsToFetch: ['internship_id', 'date'],
+            fieldsToFetch: ['id', 'internship_id', 'date'],
           ),
         ]);
 
@@ -533,29 +532,26 @@ class MySqlInternshipsRepository extends InternshipsRepository {
       for (final Map<String, dynamic> evaluation
           in (internship['sst_evaluations'] as List? ?? [])) {
         final evaluationSubquery = (await sqlInterface.performSelectQuery(
-                user: user,
-                tableName: 'internship_sst_evaluations',
-                filters: {
-              'id': evaluation['id']
-            },
-                subqueries: [
-              sqlInterface.selectSubquery(
-                dataTableName: 'internship_sst_evaluation_persons',
-                asName: 'present',
-                fieldsToFetch: ['person_name'],
-                idNameToDataTable: 'evaluation_id',
-              ),
-              sqlInterface.selectSubquery(
-                dataTableName: 'internship_sst_evaluation_questions',
-                asName: 'questions',
-                fieldsToFetch: ['question', 'answers'],
-                idNameToDataTable: 'evaluation_id',
-              ),
-            ]))
+          user: user,
+          tableName: 'internship_sst_evaluations',
+          filters: {'id': evaluation['id']},
+          subqueries: [
+            sqlInterface.selectSubquery(
+              dataTableName: 'internship_sst_evaluation_persons',
+              asName: 'present',
+              fieldsToFetch: ['person_name'],
+              idNameToDataTable: 'evaluation_id',
+            ),
+            sqlInterface.selectSubquery(
+              dataTableName: 'internship_sst_evaluation_questions',
+              asName: 'questions',
+              fieldsToFetch: ['question', 'answers'],
+              idNameToDataTable: 'evaluation_id',
+            ),
+          ],
+        ))
             .first;
 
-        // TODO Check id
-        // TODO Check date
         evaluation['present_at_evaluation'] = [
           for (final person in (evaluationSubquery['present'] as List? ?? []))
             person['person_name']
@@ -571,19 +567,19 @@ class MySqlInternshipsRepository extends InternshipsRepository {
       }
       internship['sst_evaluations'] = sstEvaluations;
 
-      internship['enterprise_evaluation'] =
-          (internship['enterprise_evaluation'] as List?)?.firstOrNull;
-      if (internship['enterprise_evaluation'] != null) {
+      final enterpriseEvaluations = [];
+      for (final evaluation
+          in (internship['enterprise_evaluations'] as List?) ?? []) {
         final skills = await sqlInterface.performSelectQuery(
             user: user,
             tableName: 'post_internship_enterprise_evaluation_skills',
-            filters: {
-              'post_evaluation_id': internship['enterprise_evaluation']['id']
-            });
-        internship['enterprise_evaluation']['skills_required'] = [
+            filters: {'post_evaluation_id': evaluation['id']});
+        evaluation['skills_required'] = [
           for (final skill in (skills as List? ?? [])) skill['skill_name']
         ];
+        enterpriseEvaluations.add(evaluation);
       }
+      internship['enterprise_evaluations'] = enterpriseEvaluations;
 
       map[id] = Internship.fromSerialized(internship);
     }
@@ -936,7 +932,7 @@ class MySqlInternshipsRepository extends InternshipsRepository {
   Future<void> _updateToAttitudeEvaluations(
       Internship internship, Internship previous) async {
     // Attitude evaluations are not updated, but stacked
-    _insertToAttitudeEvaluations(internship, previous);
+    await _insertToAttitudeEvaluations(internship, previous);
   }
 
   Future<void> _insertToVisaEvaluations(Internship internship,
@@ -994,28 +990,30 @@ class MySqlInternshipsRepository extends InternshipsRepository {
       }
       final toWait = <Future>[];
 
-      toWait.add(sqlInterface.performInsertQuery(
-          tableName: 'internship_sst_evaluation_info',
-          data: {
-            'internship_id': internship.id,
-            'date': evaluation['date'],
-          }));
+      await sqlInterface
+          .performInsertQuery(tableName: 'internship_sst_evaluations', data: {
+        'id': evaluation['id'],
+        'internship_id': internship.id,
+        'date': evaluation['date'],
+      });
 
       for (final person
           in (evaluation['present_at_evaluation'] as List? ?? [])) {
         toWait.add(sqlInterface.performInsertQuery(
             tableName: 'internship_sst_evaluation_persons',
-            data: {'internship_id': internship.id, 'person_name': person}));
+            data: {'evaluation_id': evaluation['id'], 'person_name': person}));
       }
 
       final questions = evaluation['questions'] as Map?;
       for (final question in (questions?.keys.toList() ?? [])) {
+        final answers = (questions![question] as List?)?.join('\n');
+        if (answers == null) continue;
         toWait.add(sqlInterface.performInsertQuery(
             tableName: 'internship_sst_evaluation_questions',
             data: {
-              'internship_id': internship.id,
+              'evaluation_id': evaluation['id'],
               'question': question,
-              'answers': (questions![question] as List?)?.join('\n'),
+              'answers': answers,
             }));
       }
 
@@ -1025,81 +1023,72 @@ class MySqlInternshipsRepository extends InternshipsRepository {
 
   Future<void> _updateJobSstEvaluation(
       Internship internship, Internship previous) async {
-    final differences = internship.getDifference(previous);
-    if (!differences.contains('sst_evaluation')) return;
-
-    // It would be possible to update properly the sst evaluation, but
-    // it is not so important, so we use the trick of deleting and reinserting.
-    final toWait = <Future>[];
-    toWait.add(sqlInterface.performDeleteQuery(
-        tableName: 'internship_sst_evaluation_info',
-        filters: {'internship_id': internship.id}));
-    toWait.add(sqlInterface.performDeleteQuery(
-        tableName: 'internship_sst_evaluation_persons',
-        filters: {'internship_id': internship.id}));
-    toWait.add(sqlInterface.performDeleteQuery(
-        tableName: 'internship_sst_evaluation_questions',
-        filters: {'internship_id': internship.id}));
-    await Future.wait(toWait);
-
+    // SST evaluations are not updated, but stacked
     await _insertJobSstEvaluation(internship, previous);
   }
 
   Future<void> _insertToEnterpriseEvaluation(Internship internship) async {
-    if (internship.enterpriseEvaluation != null) {
-      final evaluation = internship.enterpriseEvaluation!.serialize();
+    final toWait = <Future>[];
+    for (final evaluation in internship.enterpriseEvaluations) {
+      final serialized = evaluation.serialize();
       await sqlInterface.performInsertQuery(
           tableName: 'post_internship_enterprise_evaluations',
           data: {
-            'id': evaluation['id'],
-            'date': evaluation['date'],
+            'id': serialized['id'],
+            'date': serialized['date'],
             'internship_id': internship.id,
-            'task_variety': evaluation['task_variety'],
-            'training_plan_respect': evaluation['training_plan_respect'],
-            'autonomy_expected': evaluation['autonomy_expected'],
-            'efficiency_expected': evaluation['efficiency_expected'],
-            'supervision_style': evaluation['supervision_style'],
-            'ease_of_communication': evaluation['ease_of_communication'],
-            'absence_acceptance': evaluation['absence_acceptance'],
-            'supervision_comments': evaluation['supervision_comments'],
-            'acceptance_tsa': evaluation['acceptance_tsa'],
+            'task_variety': serialized['task_variety'],
+            'training_plan_respect': serialized['training_plan_respect'],
+            'autonomy_expected': serialized['autonomy_expected'],
+            'efficiency_expected': serialized['efficiency_expected'],
+            'supervision_style': serialized['supervision_style'],
+            'ease_of_communication': serialized['ease_of_communication'],
+            'absence_acceptance': serialized['absence_acceptance'],
+            'supervision_comments': serialized['supervision_comments'],
+            'acceptance_tsa': serialized['acceptance_tsa'],
             'acceptance_language_disorder':
-                evaluation['acceptance_language_disorder'],
+                serialized['acceptance_language_disorder'],
             'acceptance_intellectual_disability':
-                evaluation['acceptance_intellectual_disability'],
+                serialized['acceptance_intellectual_disability'],
             'acceptance_physical_disability':
-                evaluation['acceptance_physical_disability'],
+                serialized['acceptance_physical_disability'],
             'acceptance_mental_health_disorder':
-                evaluation['acceptance_mental_health_disorder'],
+                serialized['acceptance_mental_health_disorder'],
             'acceptance_behavior_difficulties':
-                evaluation['acceptance_behavior_difficulties'],
+                serialized['acceptance_behavior_difficulties'],
           });
 
-      for (final skill in evaluation['skills_required'] as List) {
-        await sqlInterface.performInsertQuery(
+      for (final skill in (serialized['skills_required'] as List?) ?? []) {
+        toWait.add(sqlInterface.performInsertQuery(
             tableName: 'post_internship_enterprise_evaluation_skills',
             data: {
-              'post_evaluation_id': evaluation['id'],
+              'post_evaluation_id': serialized['id'],
               'skill_name': skill
-            });
+            }));
       }
     }
+
+    await Future.wait(toWait);
   }
 
   Future<void> _updateToEnterpriseEvaluation(
       Internship internship, Internship previous) async {
     final toUpdate = internship.getDifference(previous);
-    if (toUpdate.contains('enterprise_evaluation')) {
-      // First remove the previous evaluation
-      await sqlInterface.performDeleteQuery(
-          tableName: 'post_internship_enterprise_evaluations',
-          filters: {'internship_id': internship.id});
-      await sqlInterface.performDeleteQuery(
-          tableName: 'post_internship_enterprise_evaluation_skills',
-          filters: {'post_evaluation_id': previous.enterpriseEvaluation!.id});
+    if (!toUpdate.contains('enterprise_evaluations')) return;
 
-      await _insertToEnterpriseEvaluation(internship);
+    // First remove the all the previous evaluations to start fresh
+    final toWait = <Future>[];
+    for (final evaluation in previous.enterpriseEvaluations) {
+      toWait.add(sqlInterface.performDeleteQuery(
+          tableName: 'post_internship_enterprise_evaluations',
+          filters: {'id': evaluation.id}));
+      toWait.add(sqlInterface.performDeleteQuery(
+          tableName: 'post_internship_enterprise_evaluation_skills',
+          filters: {'post_evaluation_id': evaluation.id}));
     }
+    await Future.wait(toWait);
+
+    await _insertToEnterpriseEvaluation(internship);
   }
 
   @override

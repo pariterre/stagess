@@ -19,22 +19,22 @@ final _logger = Logger('AttitudeEvaluationScreen');
 Future<void> showAttitudeEvaluationDialog(
   BuildContext context, {
   required String internshipId,
-  int? evaluationIndex,
+  String? evaluationId,
 }) async {
-  final editMode = evaluationIndex == null;
+  final editMode = evaluationId == null;
   _logger.info('Showing AttitudeEvaluationDialog with editMode: $editMode');
 
   final internships = InternshipsProvider.of(context, listen: false);
   final internship = internships.fromId(internshipId);
 
-  evaluationIndex = evaluationIndex ??
+  evaluationId = evaluationId ??
       (internship.attitudeEvaluations.isEmpty
           ? null
-          : internship.attitudeEvaluations.length - 1);
-  final controller = evaluationIndex == null
+          : internship.attitudeEvaluations.last.id);
+  final controller = evaluationId == null
       ? AttitudeEvaluationFormController(internshipId: internshipId)
       : AttitudeEvaluationFormController.fromInternshipId(context,
-          internshipId: internshipId, evaluationIndex: evaluationIndex);
+          internshipId: internshipId, evaluationId: evaluationId);
 
   if (editMode) {
     final hasLock = await internships.getLockForItem(internship);
@@ -91,12 +91,12 @@ class AttitudeEvaluationFormController {
   factory AttitudeEvaluationFormController.fromInternshipId(
     BuildContext context, {
     required String internshipId,
-    required int evaluationIndex,
+    required String evaluationId,
   }) {
     Internship internship =
         InternshipsProvider.of(context, listen: false)[internshipId];
     InternshipEvaluationAttitude evaluation =
-        internship.attitudeEvaluations[evaluationIndex];
+        internship.attitudeEvaluations.firstWhere((e) => e.id == evaluationId);
 
     final controller = AttitudeEvaluationFormController(
       internshipId: internshipId,

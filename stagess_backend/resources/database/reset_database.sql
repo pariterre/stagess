@@ -560,16 +560,16 @@ CREATE TABLE post_internship_enterprise_evaluations (
     FOREIGN KEY (internship_id) REFERENCES internships(id) ON DELETE CASCADE
 );
 
+CREATE TABLE post_internship_enterprise_evaluation_skills (
+    post_evaluation_id VARCHAR(36) NOT NULL,
+    skill_name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (post_evaluation_id) REFERENCES post_internship_enterprise_evaluations(id) ON DELETE CASCADE
+);
+
 CREATE TABLE teachers_visiting_priorities (
     teacher_id VARCHAR(36) NOT NULL,
     internship_id VARCHAR(36) NOT NULL,
     visiting_priority INT NOT NULL,
     FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE,
     FOREIGN KEY (internship_id) REFERENCES internships(id) ON DELETE CASCADE
-);
-
-CREATE TABLE post_internship_enterprise_evaluation_skills (
-    post_evaluation_id VARCHAR(36) NOT NULL,
-    skill_name VARCHAR(100) NOT NULL,
-    FOREIGN KEY (post_evaluation_id) REFERENCES post_internship_enterprise_evaluations(id) ON DELETE CASCADE
 );

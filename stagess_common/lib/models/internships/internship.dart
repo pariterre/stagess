@@ -231,6 +231,16 @@ class Internship extends ExtendedItemSerializable {
       if (a.date.isAfter(b.date)) return 1;
       return 0;
     });
+    sstEvaluations.sort((a, b) {
+      if (a.date.isBefore(b.date)) return -1;
+      if (a.date.isAfter(b.date)) return 1;
+      return 0;
+    });
+    enterpriseEvaluations.sort((a, b) {
+      if (a.date.isBefore(b.date)) return -1;
+      if (a.date.isAfter(b.date)) return 1;
+      return 0;
+    });
   }
 
   Internship._({

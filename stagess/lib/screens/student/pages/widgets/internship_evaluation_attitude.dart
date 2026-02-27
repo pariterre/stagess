@@ -29,15 +29,15 @@ class EvaluationAttitude extends StatelessWidget {
             .attitudeEvaluations,
         onClickedNewEvaluation: () =>
             showAttitudeEvaluationDialog(context, internshipId: internshipId),
-        onClickedShowEvaluation: (evaluationIndex) =>
-            showAttitudeEvaluationDialog(context,
-                internshipId: internshipId, evaluationIndex: evaluationIndex),
-        onClickedShowEvaluationPdf: (evaluationIndex) => showPdfDialog(
+        onClickedShowEvaluation: (evaluationId) => showAttitudeEvaluationDialog(
+            context,
+            internshipId: internshipId,
+            evaluationId: evaluationId),
+        onClickedShowEvaluationPdf: (evaluationId) => showPdfDialog(
               context,
               pdfGeneratorCallback: (context, format) =>
                   generateAttitudeEvaluationPdf(context, format,
-                      internshipId: internshipId,
-                      evaluationIndex: evaluationIndex),
+                      internshipId: internshipId, evaluationId: evaluationId),
             ));
   }
 }

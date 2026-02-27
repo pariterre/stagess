@@ -19,9 +19,9 @@ final _logger = Logger('EnterpriseEvaluationScreen');
 Future<void> showEnterpriseEvaluationFormDialog(
   BuildContext context, {
   required String internshipId,
-  int? evaluationIndex,
+  String? evaluationId,
 }) async {
-  final editMode = evaluationIndex == null;
+  final editMode = evaluationId == null;
   final internships = InternshipsProvider.of(context, listen: false);
   final internship = internships.fromId(internshipId);
 

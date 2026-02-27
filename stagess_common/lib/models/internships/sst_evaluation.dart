@@ -72,7 +72,7 @@ class SstEvaluation extends InternshipEvaluation {
       };
   static FetchableFields get fetchableFields => FetchableFields.reference({
         'id': FetchableFields.mandatory,
-        'date': FetchableFields.mandatory,
+        'date': FetchableFields.optional,
         'present_at_evaluation': FetchableFields.optional,
         'questions': FetchableFields.optional,
       });

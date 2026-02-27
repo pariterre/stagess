@@ -32,15 +32,14 @@ class EvaluationSkill extends StatelessWidget {
             .skillEvaluations,
         onClickedNewEvaluation: () =>
             showSkillEvaluationFormDialog(context, internshipId: internshipId),
-        onClickedShowEvaluation: (evaluationIndex) =>
+        onClickedShowEvaluation: (evaluationId) =>
             showSkillEvaluationFormDialog(context,
-                internshipId: internshipId, evaluationIndex: evaluationIndex),
-        onClickedShowEvaluationPdf: (evaluationIndex) => showPdfDialog(
+                internshipId: internshipId, evaluationId: evaluationId),
+        onClickedShowEvaluationPdf: (evaluationId) => showPdfDialog(
               context,
               pdfGeneratorCallback: (context, format) =>
                   generateSkillEvaluationPdf(context, format,
-                      internshipId: internshipId,
-                      evaluationIndex: evaluationIndex),
+                      internshipId: internshipId, evaluationId: evaluationId),
             ));
   }
 }

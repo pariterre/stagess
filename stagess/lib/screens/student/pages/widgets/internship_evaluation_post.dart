@@ -28,15 +28,14 @@ class EvaluationPost extends StatelessWidget {
         onClickedNewEvaluation: () => showEnterpriseEvaluationFormDialog(
             context,
             internshipId: internshipId),
-        onClickedShowEvaluation: (evaluationIndex) =>
+        onClickedShowEvaluation: (evaluationId) =>
             showEnterpriseEvaluationFormDialog(context,
-                internshipId: internshipId, evaluationIndex: evaluationIndex),
-        onClickedShowEvaluationPdf: (evaluationIndex) => showPdfDialog(
+                internshipId: internshipId, evaluationId: evaluationId),
+        onClickedShowEvaluationPdf: (evaluationId) => showPdfDialog(
               context,
               pdfGeneratorCallback: (context, format) =>
                   generateEnterpriseEvaluationPdf(context, format,
-                      internshipId: internshipId,
-                      evaluationIndex: evaluationIndex),
+                      internshipId: internshipId, evaluationId: evaluationId),
             ));
   }
 }

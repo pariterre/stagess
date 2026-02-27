@@ -23,10 +23,11 @@ final _logger = Logger('SkillEvaluationDialog');
 Future<void> showSkillEvaluationFormDialog(
   BuildContext context, {
   required String internshipId,
-  int? evaluationIndex,
+  String? evaluationId,
 }) async {
-  final editMode = evaluationIndex == null;
-  _logger.info('Showing SkillEvaluationFormDialog with editMode: $editMode');
+  final editMode = evaluationId == null;
+  _logger.info(
+      'Showing SkillEvaluationFormDialog for internship $internshipId with editMode: $editMode');
 
   final internships = InternshipsProvider.of(context, listen: false);
   final internship = internships.fromId(internshipId);
@@ -54,7 +55,7 @@ Future<void> showSkillEvaluationFormDialog(
           child: _SkillEvaluationMainScreen(
             rootContext: context,
             internshipId: internshipId,
-            evaluationIndex: evaluationIndex,
+            evaluationId: evaluationId,
           ),
         ),
       ),
@@ -84,8 +85,8 @@ class SkillEvaluationFormController {
   }) {
     clearForm(context);
   }
-  int? _previousEvaluationIndex; // -1 is the last, null is not from evaluation
-  bool get isFilledUsingPreviousEvaluation => _previousEvaluationIndex != null;
+  String? _previousEvaluationId; // -1 is the last, null is not from evaluation
+  bool get isFilledUsingPreviousEvaluation => _previousEvaluationId != null;
 
   final bool canModify;
   SkillEvaluationGranularity evaluationGranularity =
@@ -100,7 +101,7 @@ class SkillEvaluationFormController {
   factory SkillEvaluationFormController.fromInternshipId(
     BuildContext context, {
     required String internshipId,
-    required int evaluationIndex,
+    required String evaluationId,
     required bool canModify,
   }) {
     final controller = SkillEvaluationFormController(
@@ -108,7 +109,7 @@ class SkillEvaluationFormController {
       internshipId: internshipId,
       canModify: canModify,
     );
-    controller.fillFromPreviousEvaluation(context, evaluationIndex);
+    controller.fillFromPreviousEvaluation(context, evaluationId);
     return controller;
   }
 
@@ -173,16 +174,16 @@ class SkillEvaluationFormController {
     final internshipTp = internship(context, listen: false);
     if (internshipTp.skillEvaluations.isEmpty) return null;
 
-    return _previousEvaluationIndex! < 0
-        ? internshipTp.skillEvaluations.last
-        : internshipTp.skillEvaluations[_previousEvaluationIndex!];
+    return internshipTp.skillEvaluations
+            .firstWhereOrNull((e) => e.id == _previousEvaluationId) ??
+        internshipTp.skillEvaluations.last;
   }
 
   void fillFromPreviousEvaluation(
-      BuildContext context, int previousEvaluationIndex) {
+      BuildContext context, String previousEvaluationId) {
     // Reset the form to fresh
     _resetForm(context);
-    _previousEvaluationIndex = previousEvaluationIndex;
+    _previousEvaluationId = previousEvaluationId;
 
     final evaluation = _previousEvaluation(context);
     if (evaluation == null) return;
@@ -373,7 +374,7 @@ class SkillEvaluationFormController {
 
   void _resetForm(BuildContext context) {
     evaluationDate = DateTime.now();
-    _previousEvaluationIndex = null;
+    _previousEvaluationId = null;
     evaluationGranularity = SkillEvaluationGranularity.global;
 
     wereAtMeeting.clear();
@@ -393,14 +394,14 @@ class _SkillEvaluationMainScreen extends StatefulWidget {
   const _SkillEvaluationMainScreen({
     required this.rootContext,
     required this.internshipId,
-    this.evaluationIndex,
+    this.evaluationId,
   });
 
   final BuildContext rootContext;
   final String internshipId;
-  final int? evaluationIndex;
+  final String? evaluationId;
 
-  bool get editMode => evaluationIndex == null;
+  bool get editMode => evaluationId == null;
 
   @override
   State<_SkillEvaluationMainScreen> createState() =>
@@ -418,26 +419,24 @@ class _SkillEvaluationMainScreenState
       : SkillEvaluationFormController.fromInternshipId(
           context,
           internshipId: widget.internshipId,
-          evaluationIndex: widget.evaluationIndex!,
+          evaluationId: widget.evaluationId!,
           canModify: false,
         );
-  late int _currentEvaluationIndex = widget.editMode
+  late String? _currentEvaluationId = widget.editMode
       ? _formController
-              .internship(context, listen: false)
-              .skillEvaluations
-              .length -
-          1
-      : widget.evaluationIndex!;
+          .internship(context, listen: false)
+          .skillEvaluations
+          .last
+          .id
+      : widget.evaluationId!;
 
   @override
   void initState() {
     super.initState();
 
-    if (_currentEvaluationIndex >= 0) {
+    if (_currentEvaluationId != null) {
       _formController.fillFromPreviousEvaluation(
-        context,
-        _currentEvaluationIndex,
-      );
+          context, _currentEvaluationId!);
     }
   }
 
@@ -537,38 +536,36 @@ class _SkillEvaluationMainScreenState
                 child: Column(
                   children: [
                     const Text('Préremplir avec les résultats de\u00a0: '),
-                    DropdownButton<int?>(
-                      value: _currentEvaluationIndex,
+                    DropdownButton<String?>(
+                      value: _currentEvaluationId,
                       onChanged: (value) {
-                        _currentEvaluationIndex = value!;
-                        _currentEvaluationIndex >= evaluations.length
+                        _currentEvaluationId = evaluations
+                            .firstWhereOrNull((e) => e.id == value)
+                            ?.id;
+                        value == null || value == 'Vide'
                             ? _formController.clearForm(context)
                             : _formController.fillFromPreviousEvaluation(
                                 context,
-                                _currentEvaluationIndex,
+                                _currentEvaluationId!,
                               );
                         setState(() {});
                       },
                       items: evaluations
-                          .asMap()
-                          .keys
                           .map(
-                            (index) => DropdownMenuItem(
-                              value: index,
+                            (evaluation) => DropdownMenuItem(
+                              value: evaluation.id,
                               child: Text(
                                 DateFormat(
                                   'dd MMMM yyyy',
                                   'fr_CA',
-                                ).format(evaluations[index].date),
+                                ).format(evaluation.date),
                               ),
                             ),
                           )
                           .toList()
                         ..add(
                           DropdownMenuItem(
-                            value: evaluations.length,
-                            child: const Text('Vide'),
-                          ),
+                              value: null, child: const Text('Vide')),
                         ),
                     ),
                   ],
