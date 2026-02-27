@@ -18,9 +18,7 @@ class EvaluationSkill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _logger.finer(
-      'Building EvaluationSkill for internship: $internshipId',
-    );
+    _logger.finer('Building EvaluationSkill for internship: $internshipId');
 
     return InternshipEvaluationCard(
         title: 'C1. Compétences spécifiques du métier',
@@ -30,11 +28,15 @@ class EvaluationSkill extends StatelessWidget {
         evaluations: InternshipsProvider.of(context, listen: true)
             .fromId(internshipId)
             .skillEvaluations,
-        onClickedNewEvaluation: () =>
-            showSkillEvaluationFormDialog(context, internshipId: internshipId),
+        onClickedNewEvaluation: () => showInternshipEvaluationFormDialog(
+            context,
+            internshipId: internshipId,
+            showEvaluationDialog: showSkillEvaluationFormDialog),
         onClickedShowEvaluation: (evaluationId) =>
-            showSkillEvaluationFormDialog(context,
-                internshipId: internshipId, evaluationId: evaluationId),
+            showInternshipEvaluationFormDialog(context,
+                internshipId: internshipId,
+                evaluationId: evaluationId,
+                showEvaluationDialog: showSkillEvaluationFormDialog),
         onClickedShowEvaluationPdf: (evaluationId) => showPdfDialog(
               context,
               pdfGeneratorCallback: (context, format) =>

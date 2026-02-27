@@ -16,36 +16,14 @@ import 'package:stagess_common_flutter/widgets/checkbox_with_other.dart';
 import 'package:stagess_common_flutter/widgets/confirm_exit_dialog.dart';
 import 'package:stagess_common_flutter/widgets/custom_date_picker.dart';
 import 'package:stagess_common_flutter/widgets/radio_with_follow_up.dart';
-import 'package:stagess_common_flutter/widgets/show_snackbar.dart';
 
 final _logger = Logger('SkillEvaluationDialog');
 
-Future<void> showSkillEvaluationFormDialog(
+Future<Internship?> showSkillEvaluationFormDialog(
   BuildContext context, {
   required String internshipId,
   String? evaluationId,
 }) async {
-  final editMode = evaluationId == null;
-  _logger.info(
-      'Showing SkillEvaluationFormDialog for internship $internshipId with editMode: $editMode');
-
-  final internships = InternshipsProvider.of(context, listen: false);
-  final internship = internships.fromId(internshipId);
-
-  if (editMode) {
-    final hasLock = await internships.getLockForItem(internship);
-    if (!hasLock || !context.mounted) {
-      if (context.mounted) {
-        showSnackBar(
-          context,
-          message:
-              'Impossible de modifier ce stage, car il est en cours de modification par un autre utilisateur.',
-        );
-      }
-      return;
-    }
-  }
-
   final newEvaluation = await showDialog<InternshipEvaluationSkill?>(
     context: context,
     barrierDismissible: false,
@@ -61,18 +39,12 @@ Future<void> showSkillEvaluationFormDialog(
       ),
     ),
   );
-  if (!editMode) return;
+  if (newEvaluation == null || !context.mounted) return null;
 
-  final isSuccess = newEvaluation != null &&
-      await internships.replaceWithConfirmation(
-          Internship.fromSerialized(internship.serialize())
-            ..skillEvaluations.add(newEvaluation));
-  await internships.releaseLockForItem(internship);
-
-  if (isSuccess && context.mounted) {
-    showSnackBar(context, message: 'Le stage a bien été mis à jour');
-  }
-  return;
+  final internship =
+      InternshipsProvider.of(context, listen: false).fromId(internshipId);
+  return Internship.fromSerialized(internship.serialize())
+    ..skillEvaluations.add(newEvaluation);
 }
 
 class SkillEvaluationFormController {
@@ -401,8 +373,6 @@ class _SkillEvaluationMainScreen extends StatefulWidget {
   final String internshipId;
   final String? evaluationId;
 
-  bool get editMode => evaluationId == null;
-
   @override
   State<_SkillEvaluationMainScreen> createState() =>
       _SkillEvaluationMainScreenState();
@@ -410,7 +380,9 @@ class _SkillEvaluationMainScreen extends StatefulWidget {
 
 class _SkillEvaluationMainScreenState
     extends State<_SkillEvaluationMainScreen> {
-  late final _formController = widget.editMode
+  bool get _editMode => widget.evaluationId == null;
+
+  late final _formController = _editMode
       ? SkillEvaluationFormController(
           context,
           internshipId: widget.internshipId,
@@ -422,12 +394,17 @@ class _SkillEvaluationMainScreenState
           evaluationId: widget.evaluationId!,
           canModify: false,
         );
-  late String? _currentEvaluationId = widget.editMode
-      ? _formController
-          .internship(context, listen: false)
-          .skillEvaluations
-          .last
-          .id
+  late String? _currentEvaluationId = _editMode
+      ? (_formController
+              .internship(context, listen: false)
+              .skillEvaluations
+              .isEmpty
+          ? null
+          : _formController
+              .internship(context, listen: false)
+              .skillEvaluations
+              .last
+              .id)
       : widget.evaluationId!;
 
   @override
@@ -446,7 +423,7 @@ class _SkillEvaluationMainScreenState
     final answer = await ConfirmExitDialog.show(
       context,
       content: const Text('Toutes les modifications seront perdues.'),
-      isEditing: widget.editMode,
+      isEditing: _editMode,
     );
     if (!mounted || !answer) return;
 
@@ -491,25 +468,25 @@ class _SkillEvaluationMainScreenState
                         children: [
                           _EvaluationDate(
                             formController: _formController,
-                            editMode: widget.editMode,
+                            editMode: _editMode,
                           ),
                           _PersonAtMeeting(
                             formController: _formController,
-                            editMode: widget.editMode,
+                            editMode: _editMode,
                           ),
-                          if (widget.editMode) _buildAutofillChooser(),
+                          if (_editMode) _buildAutofillChooser(),
                           _JobToEvaluate(
                             formController: _formController,
-                            editMode: widget.editMode,
+                            editMode: _editMode,
                           ),
                           _EvaluationTypeChoser(
                             formController: _formController,
-                            editMode: widget.editMode,
+                            editMode: _editMode,
                           ),
                           _StartEvaluation(
                             rootContext: widget.rootContext,
                             formController: _formController,
-                            editMode: widget.editMode,
+                            editMode: _editMode,
                           ),
                         ],
                       );
