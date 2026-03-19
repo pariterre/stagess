@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stagess_admin/dummy_data_tutorial.dart';
 import 'package:stagess_admin/extensions/auth_provider_extension.dart';
+import 'package:stagess_admin/main.dart';
 import 'package:stagess_admin/screens/router.dart';
 import 'package:stagess_common/models/generic/access_level.dart';
 import 'package:stagess_common_flutter/providers/auth_provider.dart';
@@ -133,7 +134,8 @@ class MainDrawer extends StatelessWidget {
                   ),
                 ),
               if (authProvider.isFullySignedIn &&
-                  authProvider.databaseAccessLevel == AccessLevel.superAdmin)
+                  authProvider.databaseAccessLevel == AccessLevel.superAdmin &&
+                  useDevDb)
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -141,6 +143,29 @@ class MainDrawer extends StatelessWidget {
                       titleText: 'Réinitialiser la base de données (Tutoriel)',
                       icon: Icons.restore_from_trash_outlined,
                       onTap: () async {
+                        final accepted = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Réinitialiser la base de données'),
+                                content: Text(
+                                    'Êtes-vous sûr de vouloir réinitialiser la base de données? Cette action est irréversible.'),
+                                actions: [
+                                  OutlinedButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: Text('Annuler'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                    child: Text('Réinitialiser'),
+                                  ),
+                                ],
+                              ),
+                            ) ??
+                            false;
+                        if (!accepted || !context.mounted) return;
+
                         await resetDummyDataTutorial(context);
                         if (context.mounted && canPop) Navigator.pop(context);
                       },

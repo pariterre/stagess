@@ -20,6 +20,9 @@ import 'package:stagess_common_flutter/providers/teachers_provider.dart';
 import 'package:stagess_common_flutter/widgets/inactivity_layout.dart';
 import 'package:stagess_common_flutter/widgets/single_instance_manager.dart';
 
+const useDevDb =
+    bool.fromEnvironment('STAGESS_USE_DEV_DB', defaultValue: false);
+
 void main() async {
   // Setup logger to INFO
   const showLogs =
@@ -35,10 +38,6 @@ void main() async {
     );
   });
 
-  const useDevDb = bool.fromEnvironment(
-    'STAGESS_USE_DEV_DB',
-    defaultValue: false,
-  );
   debugPrint('Welcome to Admin Stagess!');
   debugPrint(
     'We are connecting to the ${useDevDb ? 'development' : 'production'} database '
