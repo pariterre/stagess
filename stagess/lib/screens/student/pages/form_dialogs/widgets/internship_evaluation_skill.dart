@@ -24,8 +24,8 @@ class EvaluationSkill extends StatelessWidget {
     return InternshipEvaluationCard(
         title: 'C1. Compétences spécifiques du métier',
         internshipId: internshipId,
-        evaluateButtonText: 'Évaluer l\'élève',
-        reevaluateButtonText: 'Évaluer de nouveau',
+        evaluateButtonText: 'Évaluer C1',
+        reevaluateButtonText: 'Réévaluer C1',
         evaluations: InternshipsProvider.of(context, listen: true)
             .fromId(internshipId)
             .skillEvaluations,

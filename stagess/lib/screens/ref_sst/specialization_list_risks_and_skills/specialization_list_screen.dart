@@ -94,10 +94,7 @@ class SpecializationListScreen extends StatelessWidget {
             'Elle a été faite pour les 45 métiers les plus populaires du '
             'répertoire du Ministère de l\'éducation.\n'
             '\n'
-            'Elle ne tient pas compte du contexte de chaque milieu de stage.\n'
-            '\n'
-            'Pour connaitre les risques dans une entreprise spécifique, '
-            'consulter sa fiche, onglet «\u00a0Postes\u00a0».'),
+            'Elle ne tient pas compte du contexte de chaque milieu de stage.'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, 'OK'),

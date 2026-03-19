@@ -432,6 +432,7 @@ class _CreationDate extends StatefulWidget {
 }
 
 class _CreationDateState extends State<_CreationDate> {
+  // TODO: Remove default date for new internships
   void _promptDate(BuildContext context) async {
     final newDate = await showCustomDatePicker(
       helpText: 'Sélectionner la date',
@@ -709,6 +710,7 @@ class _SupervisonInformationState extends State<_SupervisonInformation> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // TODO: Make yes the default option for new internship
               Flexible(
                 child: Text(
                   'Même personne que le contact de l\'entreprise',

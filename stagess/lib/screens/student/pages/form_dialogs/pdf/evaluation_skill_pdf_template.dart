@@ -36,8 +36,9 @@ Future<Uint8List> generateSkillEvaluationPdf(
   document.addPage(
     pw.MultiPage(
       build: (pw.Context context) => [
-        pw.Center(child: PdfTheme.titleLarge('Évaluation de l\'attitude')),
+        pw.Center(child: PdfTheme.titleLarge('Évaluation des compétences')),
         pw.SizedBox(height: 12),
+        // TODO Add the first page of C1
         PdfTheme.titleMedium('Informations générales'),
         PdfEvaluationDate(evaluationDate: controller.evaluationDate),
         pw.SizedBox(height: 12),

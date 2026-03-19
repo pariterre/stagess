@@ -25,7 +25,7 @@ class EvaluationPost extends StatelessWidget {
         title: 'Évaluation de l\'encadrement de l\'entreprise',
         internshipId: internshipId,
         evaluateButtonText: 'Évaluer l\'entreprise',
-        reevaluateButtonText: 'Évaluer de nouveau',
+        reevaluateButtonText: 'Réévaluer l\'entreprise',
         isInitiallyExpanded: internship.isEnterpriseEvaluationPending,
         evaluations: internship.enterpriseEvaluations,
         onClickedNewEvaluation: () => showInternshipEvaluationFormDialog(

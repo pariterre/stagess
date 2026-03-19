@@ -21,8 +21,8 @@ class EvaluationAttitude extends StatelessWidget {
     return InternshipEvaluationCard(
         title: 'C2. Attitudes et comportements',
         internshipId: internshipId,
-        evaluateButtonText: 'Évaluer l\'élève',
-        reevaluateButtonText: 'Évaluer de nouveau',
+        evaluateButtonText: 'Évaluer C2',
+        reevaluateButtonText: 'Réévaluer C2',
         evaluations: InternshipsProvider.of(context, listen: true)
             .fromId(internshipId)
             .attitudeEvaluations,

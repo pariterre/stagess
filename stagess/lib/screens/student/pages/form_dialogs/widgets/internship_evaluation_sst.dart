@@ -24,8 +24,8 @@ class EvaluationSst extends StatelessWidget {
     return InternshipEvaluationCard(
         title: 'SST en entreprise',
         internshipId: internshipId,
-        evaluateButtonText: 'Évaluer l\'entreprise',
-        reevaluateButtonText: 'Évaluer de nouveau',
+        evaluateButtonText: 'Évaluer la SST',
+        reevaluateButtonText: 'Réévaluer la SST',
         isInitiallyExpanded:
             internship.isActive && internship.sstEvaluations.isEmpty,
         evaluations: internship.sstEvaluations,

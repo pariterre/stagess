@@ -229,7 +229,7 @@ class _EnterpriseScreenInternalState extends State<_EnterpriseScreenInternal>
               ),
               const TextSpan(
                 text:
-                    '.\n\nVous pouvez maintenant accéder au contrat de stage dans la section "Documents".',
+                    '.\n\nVous pouvez maintenant accéder au contrat de stage dans la section "Détails du stage".',
               ),
             ],
           ),
@@ -326,6 +326,7 @@ class _EnterpriseScreenInternalState extends State<_EnterpriseScreenInternal>
                 controller: _tabController,
                 tabs: const [
                   Tab(icon: Icon(Icons.work), text: 'Métiers offerts'),
+                  // TODO Check to remove maxLenght when not editing
                   Tab(icon: Icon(Icons.info_outlined), text: 'À propos'),
                   Tab(icon: Icon(Icons.assignment), text: 'Stages'),
                 ],
