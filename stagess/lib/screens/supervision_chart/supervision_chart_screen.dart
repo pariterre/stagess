@@ -574,9 +574,35 @@ class _SupervisionChartInternalState extends State<_SupervisionChartInternal>
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: Text(
-            'Niveau de priorité des visites',
-            style: Theme.of(context).textTheme.titleSmall,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Niveau de priorité des visites',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              const SizedBox(width: 8),
+              InkWell(
+                borderRadius: BorderRadius.circular(25),
+                onTap: _forcePrioritiesDisabled || _editSignatoriesMode
+                    ? null
+                    : () => _toggleEditPrioritiesMode(context,
+                        internships: _internshipsMetaData),
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      border:
+                          Border.all(color: Theme.of(context).primaryColor)),
+                  child: Icon(
+                    _editPrioritiesMode ? Icons.save : Icons.edit,
+                    color: _forcePrioritiesDisabled || _editSignatoriesMode
+                        ? Colors.grey
+                        : Theme.of(context).primaryColor,
+                  ),
+                ),
+              )
+            ],
           ),
         ),
         Row(
@@ -605,25 +631,6 @@ class _SupervisionChartInternalState extends State<_SupervisionChartInternal>
                 ),
               );
             }),
-            InkWell(
-              borderRadius: BorderRadius.circular(25),
-              onTap: _forcePrioritiesDisabled || _editSignatoriesMode
-                  ? null
-                  : () => _toggleEditPrioritiesMode(context,
-                      internships: _internshipsMetaData),
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(color: Theme.of(context).primaryColor)),
-                child: Icon(
-                  _editPrioritiesMode ? Icons.save : Icons.edit,
-                  color: _forcePrioritiesDisabled || _editSignatoriesMode
-                      ? Colors.grey
-                      : Theme.of(context).primaryColor,
-                ),
-              ),
-            ),
           ],
         ),
       ],

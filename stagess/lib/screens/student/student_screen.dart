@@ -132,7 +132,6 @@ class _StudentScreenInternalState extends State<_StudentScreenInternal>
                       controller: _tabController,
                       onTap: (value) => _tabController.index = value,
                       tabs: const [
-                        // TODO Check to remove maxLenght when not editing
                         Tab(icon: Icon(Icons.info_outlined), text: 'À propos'),
                         Tab(icon: Icon(Icons.assignment), text: 'Stages'),
                         Tab(icon: Icon(Icons.trending_up), text: 'Progression'),

@@ -229,7 +229,7 @@ class _EnterpriseScreenInternalState extends State<_EnterpriseScreenInternal>
               ),
               const TextSpan(
                 text:
-                    '.\n\nVous pouvez maintenant accéder au contrat de stage dans la section "Détails du stage".',
+                    '.\n\nVous pouvez maintenant accéder au contrat de stage en cliquant sur "Détails du stage".',
               ),
             ],
           ),

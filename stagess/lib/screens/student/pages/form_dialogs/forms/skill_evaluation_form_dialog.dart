@@ -815,14 +815,10 @@ class _JobToEvaluateState extends State<_JobToEvaluate> {
                         }
                         setState(() {});
                       },
-                      value:
-                          widget.formController.isNotEvaluatedButWasPreviously(
-                        skill.id,
-                      )
-                              ? null
-                              : widget.formController.isSkillToEvaluate(
-                                  skill.id,
-                                ),
+                      value: widget.formController
+                              .isNotEvaluatedButWasPreviously(skill.id)
+                          ? null
+                          : widget.formController.isSkillToEvaluate(skill.id),
                       title: Text(
                         '${skill.idWithName}${skill.isOptional ? ' (Facultative)' : ''}',
                         style: Theme.of(context).textTheme.bodyMedium,

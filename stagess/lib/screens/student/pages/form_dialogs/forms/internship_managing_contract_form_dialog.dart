@@ -13,8 +13,6 @@ import 'package:stagess_common/models/enterprises/job.dart';
 import 'package:stagess_common/models/generic/phone_number.dart';
 import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/internships/internship_contract.dart';
-import 'package:stagess_common/models/internships/time_utils.dart'
-    as time_utils;
 import 'package:stagess_common/models/internships/transportation.dart';
 import 'package:stagess_common/models/persons/person.dart';
 import 'package:stagess_common/models/persons/student.dart';
@@ -92,14 +90,10 @@ class InternshipContractFormController {
   final EnterpriseJobListController _primaryJobController;
   final List<EnterpriseJobListController> _extraJobControllers;
 
-  late final _superviserFirstNameController = TextEditingController(
-      text: _previousContract?.supervisor.firstName ?? '');
-  late final _supervisorLastNameController =
-      TextEditingController(text: _previousContract?.supervisor.lastName ?? '');
-  late final _supervisorPhoneController = TextEditingController(
-      text: _previousContract?.supervisor.phone.toString() ?? '');
-  late final _supervisorEmailController =
-      TextEditingController(text: _previousContract?.supervisor.email ?? '');
+  final _superviserFirstNameController = TextEditingController();
+  final _supervisorLastNameController = TextEditingController();
+  final _supervisorPhoneController = TextEditingController();
+  final _supervisorEmailController = TextEditingController();
 
   Person get _supervisor => Person(
         id: null,
@@ -141,6 +135,21 @@ class InternshipContractFormController {
                     specializationId: id))
                 .toList() ??
             [] {
+    final enterprise = EnterprisesProvider.of(context, listen: false)
+        .fromId(internship.enterpriseId);
+
+    _superviserFirstNameController.text = isNewContract
+        ? enterprise.contact.firstName
+        : (_previousContract?.supervisor.firstName ?? '');
+    _supervisorLastNameController.text = isNewContract
+        ? enterprise.contact.lastName
+        : (_previousContract?.supervisor.lastName ?? '');
+    _supervisorPhoneController.text = isNewContract
+        ? enterprise.contact.phone.toString()
+        : (_previousContract?.supervisor.phone.toString() ?? '');
+    _supervisorEmailController.text = isNewContract
+        ? (enterprise.contact.email ?? '')
+        : (_previousContract?.supervisor.email ?? '');
     if (program != Program.fpt) _extraJobControllers.clear();
   }
 
@@ -432,7 +441,6 @@ class _CreationDate extends StatefulWidget {
 }
 
 class _CreationDateState extends State<_CreationDate> {
-  // TODO: Remove default date for new internships
   void _promptDate(BuildContext context) async {
     final newDate = await showCustomDatePicker(
       helpText: 'Sélectionner la date',
@@ -710,7 +718,6 @@ class _SupervisonInformationState extends State<_SupervisonInformation> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // TODO: Make yes the default option for new internship
               Flexible(
                 child: Text(
                   'Même personne que le contact de l\'entreprise',
@@ -854,6 +861,7 @@ class _SchedulePickerState extends State<_SchedulePicker> {
                 _VisitFrequencies(controller: widget.controller),
               ],
             )),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.5),
       ],
     );
   }
@@ -880,12 +888,7 @@ class _DateRangeState extends State<_DateRange> {
       confirmText: 'Confirmer',
       context: context,
       initialEntryMode: DatePickerEntryMode.calendar,
-      initialDateRange:
-          widget.controller._weeklySchedulesController.dateRange ??
-              time_utils.DateTimeRange(
-                start: DateTime.now(),
-                end: DateTime.now().add(const Duration(days: 90)),
-              ),
+      initialDateRange: widget.controller._weeklySchedulesController.dateRange,
       firstDate: DateTime(DateTime.now().year),
       lastDate: DateTime(DateTime.now().year + 2),
     );
