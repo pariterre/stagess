@@ -91,7 +91,7 @@ class _PhoneListTileState extends State<PhoneListTile> {
                     (widget.enabled ? null : TextStyle(color: Colors.black)),
                 disabledBorder: InputBorder.none,
               ),
-              maxLength: 50,
+              maxLength: widget.enabled ? 50 : null,
               validator: (value) {
                 if (!widget.enabled) return null;
 

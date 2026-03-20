@@ -424,7 +424,7 @@ class _ContactInfo extends StatelessWidget {
                   labelStyle: styleOverride,
                   disabledBorder: InputBorder.none,
                 ),
-                maxLength: 50,
+                maxLength: editMode ? 50 : null,
                 style: styleOverride,
                 enabled: editMode,
                 validator: (text) => text!.isEmpty
@@ -439,7 +439,7 @@ class _ContactInfo extends StatelessWidget {
                   labelStyle: styleOverride,
                   disabledBorder: InputBorder.none,
                 ),
-                maxLength: 50,
+                maxLength: editMode ? 50 : null,
                 style: styleOverride,
                 enabled: editMode,
                 validator: (text) => text!.isEmpty
@@ -455,7 +455,7 @@ class _ContactInfo extends StatelessWidget {
                   labelStyle: styleOverride,
                   disabledBorder: InputBorder.none,
                 ),
-                maxLength: 50,
+                maxLength: editMode ? 50 : null,
                 style: styleOverride,
                 enabled: editMode,
                 validator: (text) => text!.isEmpty
@@ -719,7 +719,7 @@ class _TaxesInfoState extends State<_TaxesInfo> {
                 enabled: widget.editMode,
                 validator: null,
                 keyboardType: TextInputType.number,
-                maxLength: 50,
+                maxLength: widget.editMode ? 50 : null,
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.5),
             ],

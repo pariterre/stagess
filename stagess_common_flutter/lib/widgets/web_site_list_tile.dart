@@ -91,7 +91,7 @@ class _WebSiteListTileState extends State<WebSiteListTile> {
                     widget.titleStyle ?? const TextStyle(color: Colors.black),
                 disabledBorder: InputBorder.none,
               ),
-              maxLength: 200,
+              maxLength: widget.enabled ? 200 : null,
               style:
                   widget.contentStyle ?? const TextStyle(color: Colors.black),
               enabled: widget.enabled,
