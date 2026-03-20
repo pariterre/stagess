@@ -7,19 +7,25 @@ class PdfRadioButtons extends pw.StatelessWidget {
   PdfRadioButtons({
     required this.options,
     this.textStyle,
+    this.direction = pw.Axis.vertical,
   });
 
   final Map<String, bool> options;
   final pw.TextStyle? textStyle;
+  final pw.Axis direction;
 
   @override
   pw.Widget build(pw.Context context) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
+    return pw.Flex(
+      direction: direction,
+      crossAxisAlignment: direction == pw.Axis.vertical
+          ? pw.CrossAxisAlignment.start
+          : pw.CrossAxisAlignment.center,
       children: options.entries.map(
         (entry) {
           return pw.Padding(
-              padding: pw.EdgeInsets.only(bottom: 4),
+              padding: pw.EdgeInsets.only(
+                  bottom: 4, right: direction == pw.Axis.horizontal ? 16 : 0),
               child: pw.Row(
                 mainAxisSize: pw.MainAxisSize.min,
                 crossAxisAlignment: pw.CrossAxisAlignment.center,
