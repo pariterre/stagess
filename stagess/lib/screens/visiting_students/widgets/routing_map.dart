@@ -119,6 +119,7 @@ class RoutingController {
   final List<Waypoint> destinations;
   final Function()? onItineraryChanged;
   Itinerary _itinerary;
+  Itinerary get itinerary => _itinerary;
   bool _hasChanged = false;
   bool get hasChanged => _hasChanged;
 
@@ -142,6 +143,7 @@ class RoutingController {
   routing_client.Route? _route;
   List<double> _distances = [];
   List<double> get distances => _distances;
+  double get totalDistance => _distances.fold(0, (a, b) => a + b);
 
   void addToItinerary(int destinationIndex) {
     _itinerary.add(destinations[destinationIndex].copyWith(forceNewId: true));

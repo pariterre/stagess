@@ -337,7 +337,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                         ),
                       ),
                       _Distance(
-                        _routingController.distances,
+                        _routingController,
                         itinerary: _currentItinerary,
                       ),
                       SizedBox(height: 12.0),
@@ -477,14 +477,14 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
 }
 
 class _Distance extends StatelessWidget {
-  const _Distance(this.distances, {required this.itinerary});
+  const _Distance(this.controller, {required this.itinerary});
 
-  final List<double>? distances;
+  final RoutingController controller;
   final Itinerary itinerary;
 
   @override
   Widget build(BuildContext context) {
-    if (distances == null) return Container();
+    if (controller.distances.isEmpty) return Container();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -498,14 +498,14 @@ class _Distance extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
                   'Kilométrage\u00a0: '
-                  '${(distances!.isEmpty ? 0 : distances!.reduce((a, b) => a + b).toDouble() / 1000).toStringAsFixed(1)}km',
+                  '${(controller.totalDistance / 1000).toStringAsFixed(1)}km',
                   style: _subtitleStyleOf(context),
                 ),
               ),
               _exportToPdfButton(context),
             ],
           ),
-          ..._distancesTo(distances!),
+          ..._distancesTo(controller.distances),
         ],
       ),
     );
@@ -539,9 +539,8 @@ class _Distance extends StatelessWidget {
     return IconButton(
       onPressed: hasItinerary
           ? () => showPdfDialog(context,
-              pdfGeneratorCallback: (context, format) => generateItineraryPdf(
-                  context, format,
-                  itineraryName: itinerary.name))
+              pdfGeneratorCallback: (context, format) =>
+                  generateItineraryPdf(context, format, controller: controller))
           : null,
       icon: Icon(Icons.picture_as_pdf,
           color: hasItinerary ? Theme.of(context).primaryColor : Colors.grey),
