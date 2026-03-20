@@ -889,8 +889,8 @@ class _DateRangeState extends State<_DateRange> {
       context: context,
       initialEntryMode: DatePickerEntryMode.calendar,
       initialDateRange: widget.controller._weeklySchedulesController.dateRange,
-      firstDate: DateTime(DateTime.now().year),
-      lastDate: DateTime(DateTime.now().year + 2),
+      firstDate: DateTime(DateTime.now().year - 5),
+      lastDate: DateTime(DateTime.now().year + 5),
     );
     if (range == null) return;
 

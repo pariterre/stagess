@@ -51,6 +51,7 @@ class _SupervisionExpansionPanelState extends State<SupervisionExpansionPanel> {
           _buildInfoButton(context, isExpanded: isExpanded),
         ]),
       ),
+      // TODO Add a date filter
       child: Padding(
         padding: const EdgeInsets.only(left: 24.0, right: 24.0),
         child: Column(

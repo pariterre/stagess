@@ -92,7 +92,7 @@ enum AbsenceAcceptance {
   String get label {
     switch (this) {
       case AbsenceAcceptance.low:
-        return 'Grande\ntolérance';
+        return 'Faible\ntolérance';
       case AbsenceAcceptance.high:
         return 'Tolérance\ntrès élevée';
     }

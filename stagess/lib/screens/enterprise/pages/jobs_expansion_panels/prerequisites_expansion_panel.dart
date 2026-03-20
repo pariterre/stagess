@@ -213,8 +213,8 @@ class PrerequisitesExpansionPanelState
                       validator: (value) {
                         final current = int.tryParse(value!);
                         if (current == null) return 'Préciser';
-                        if (current < 10 || current > 30) {
-                          return 'Entre 10 et 30';
+                        if (current < 15 || current > 30) {
+                          return 'Minimum 15 ans';
                         }
                         return null;
                       },
@@ -236,6 +236,7 @@ class PrerequisitesExpansionPanelState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // TODO Remove concept of Uniform
         const Text(
           'Tenue de travail',
           style: TextStyle(fontWeight: FontWeight.bold),

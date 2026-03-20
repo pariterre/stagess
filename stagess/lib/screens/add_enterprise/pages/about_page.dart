@@ -108,6 +108,7 @@ class AboutPageState extends State<AboutPage> {
               ),
               SizedBox(height: 16),
               const SubTitle('Entreprise représentée par', left: 0, top: 0),
+              // TODO Add info: "Contact dans l'entreprise"
               TextFormField(
                 decoration: const InputDecoration(labelText: '* Prénom'),
                 validator: (text) => text!.isEmpty
@@ -142,7 +143,7 @@ class AboutPageState extends State<AboutPage> {
               ),
               EmailListTile(
                 controller: contactEmailController,
-                isMandatory: true,
+                isMandatory: true, // TODO Make this not mandatory
                 enabled: true,
                 canMail: false,
               ),

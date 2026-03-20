@@ -172,6 +172,7 @@ bool isBetween(AttitudeCategoryEnum category, int min, int max) {
 }
 
 class Ponctuality implements AttitudeCategoryEnum {
+  // TODO: add partial evaluation?
   @override
   String get title => 'Ponctualité';
 

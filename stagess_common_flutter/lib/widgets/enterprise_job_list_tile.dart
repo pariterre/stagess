@@ -414,7 +414,7 @@ class _EnterpriseJobListTileState extends State<EnterpriseJobListTile> {
             validator: (value) {
               final current = int.tryParse(value!);
               if (current == null) return 'Préciser';
-              if (current < 10 || current > 30) return 'Entre 10 et 30';
+              if (current < 15 || current > 30) return 'Minimum 15 ans';
               return null;
             },
             keyboardType: TextInputType.number,
@@ -745,6 +745,7 @@ class BuildProtectionsRadio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO Remove EPI
     return RadioWithFollowUp<ProtectionsStatus>(
       key: radioKey,
       title: hideTitle
