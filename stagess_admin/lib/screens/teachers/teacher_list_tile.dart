@@ -394,8 +394,12 @@ class TeacherListTileState extends State<TeacherListTile> {
                 const SizedBox(height: 8),
                 _buildEmail(),
                 const SizedBox(height: 8),
-                _buildIsAdmin(),
-                const SizedBox(height: 8),
+                ConfigurationService.showDevelopmentFeatures
+                    ? Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: _buildIsAdmin(),
+                      )
+                    : const SizedBox.shrink(),
                 _buildGroups(),
                 if (!_isEditing && widget.teacher.email.isNotEmpty)
                   Column(

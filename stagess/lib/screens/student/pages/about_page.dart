@@ -90,8 +90,8 @@ class AboutPageState extends State<AboutPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildGeneralInformation(),
-              _buildTeacherInChargeTile(),
               _buildEmergencyContact(),
+              _buildTeacherInChargeTile(),
               SizedBox(height: MediaQuery.of(context).size.height * 0.5),
             ],
           ),

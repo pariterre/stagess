@@ -87,6 +87,9 @@ class InternshipListTileState extends State<InternshipListTile> {
   void dispose() {
     _studentPickerController.dispose();
     _teacherPickerController.dispose();
+    for (var controller in _extraTeachersPickerController) {
+      controller.dispose();
+    }
     _enterprisePickerController.dispose();
     _visitFrequenciesController.dispose();
     _teacherNotesController.dispose();
@@ -407,6 +410,14 @@ class InternshipListTileState extends State<InternshipListTile> {
     _teacherPickerController.teacher =
         TeachersProvider.of(context, listen: false)
             .fromIdOrNull(widget.internship.signatoryTeacherId);
+
+    _extraTeachersPickerController.clear();
+    _extraTeachersPickerController.addAll(widget
+        .internship.extraSupervisingTeacherIds
+        .map((teacherId) => TeacherPickerController(
+              initial: TeachersProvider.of(context, listen: false)
+                  .fromIdOrNull(teacherId),
+            )));
 
     final supervisor =
         widget.internship.currentContract?.supervisor ?? Person.empty;
@@ -773,33 +784,14 @@ class InternshipListTileState extends State<InternshipListTile> {
                     title:
                         '${_isEditing ? '* ' : ''}Enseignant·e superviseur de stage supplémentaire',
                     controller: controller,
-                    editMode: _isEditing,
+                    editMode: false,
                     filter: (teacher) =>
                         teacher.schoolBoardId == widget.schoolBoardId,
                     isMandatory: true,
                   ),
                 ),
-                if (_isEditing)
-                  IconButton(
-                      onPressed: () => setState(() {
-                            _extraTeachersPickerController.remove(controller);
-                          }),
-                      icon: Icon(Icons.delete, color: Colors.red)),
               ],
             )),
-        if (_isEditing)
-          Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    _extraTeachersPickerController
-                        .add(TeacherPickerController());
-                  });
-                },
-                child: Text('Ajouter un·e enseignant·e superviseur·e',
-                    textAlign: TextAlign.center)),
-          )
       ],
     );
   }
