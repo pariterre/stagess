@@ -301,6 +301,8 @@ class MySqlStudentsRepository extends StudentsRepository {
       'school_board_id': user.accessLevel < AccessLevel.superAdmin
           ? user.schoolBoardId!
           : null,
+      'school_id':
+          user.accessLevel <= AccessLevel.schoolAdmin ? user.schoolId! : null,
     }..removeWhere((key, value) => value == null))
         .cast<String, dynamic>();
 

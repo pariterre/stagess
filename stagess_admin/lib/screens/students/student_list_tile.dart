@@ -150,7 +150,11 @@ class StudentListTileState extends State<StudentListTile> {
       AuthProvider.of(context, listen: false).databaseAccessLevel >=
       AccessLevel.schoolBoardAdmin;
 
-  late String _selectedSchoolId = widget.student.schoolId;
+  late String _selectedSchoolId =
+      (widget.student.schoolId.isNotEmpty && widget.student.schoolId != '-1') ||
+              _showSchoolSelection
+          ? widget.student.schoolId
+          : AuthProvider.of(context, listen: false).schoolId!;
   late final _firstNameController = TextEditingController(
     text: widget.student.firstName,
   );
