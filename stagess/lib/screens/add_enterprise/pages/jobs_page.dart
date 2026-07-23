@@ -32,8 +32,6 @@ class JobsPageState extends State<JobsPage> {
 
     _formKey.currentState!.save();
 
-    if (_jobsControllers.isEmpty) return false;
-
     return _formKey.currentState!.validate();
   }
 
