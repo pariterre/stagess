@@ -756,13 +756,28 @@ class EnterpriseListTileState extends State<EnterpriseListTile> {
 
     return Padding(
       padding: const EdgeInsets.only(right: 12.0),
-      child: TeacherPickerTile(
-        title: 'Enseignant·e ayant démarché l\'entreprise',
-        controller: _teacherPickerController,
-        filter: (teacher) =>
-            teacher.schoolBoardId == widget.enterprise.schoolBoardId,
-        editMode: _isEditing,
-      ),
+      child: _isEditing
+          ? TeacherPickerTile(
+              title: 'Enseignant·e ayant démarché l\'entreprise',
+              controller: _teacherPickerController,
+              filter: (teacher) =>
+                  teacher.schoolBoardId == widget.enterprise.schoolBoardId,
+              editMode: true,
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Enseignant·e ayant démarché l\'entreprise',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _teacherPickerController.teacher?.fullName ?? 'Aucun',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
     );
   }
 

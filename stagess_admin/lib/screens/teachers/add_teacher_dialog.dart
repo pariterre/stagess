@@ -67,9 +67,6 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
-              const SizedBox(height: 16),
-              const SizedBox(height: 12),
-              Text('Compléter les informations personnelles'),
               const SizedBox(height: 8),
               TeacherListTile(
                 key: _editingKey,

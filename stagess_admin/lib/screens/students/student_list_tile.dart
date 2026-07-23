@@ -598,7 +598,8 @@ class StudentListTileState extends State<StudentListTile> {
             initialValue: widget.student.schoolId,
             name: 'School selection',
             orientation: OptionsOrientation.vertical,
-            decoration: InputDecoration(labelText: 'Assigner à une école'),
+            decoration: InputDecoration(
+                labelText: 'Assigner à une école', border: InputBorder.none),
             onChanged: (value) =>
                 setState(() => _selectedSchoolId = value ?? '-1'),
             validator: (_) {
@@ -607,6 +608,7 @@ class StudentListTileState extends State<StudentListTile> {
                   : null;
             },
             options: schoolBoard.schools
+                .sorted((a, b) => a.name.compareTo(b.name))
                 .map(
                   (e) => FormBuilderFieldOption(
                     value: e.id,
@@ -737,11 +739,13 @@ class StudentListTileState extends State<StudentListTile> {
         ),
         if (_isEditing ||
             _supplementaryTeacherInChargeIdsController.options.isNotEmpty)
+          // TODO Clean empty elements on save
           WidgetRepeater(
             controller: _supplementaryTeacherInChargeIdsController,
             buttonTitle: 'Ajouter un·e intervenant·e',
             hasCheckboxes: false,
             canReorder: false,
+            showSuffixIconOnDisabled: false,
             enabled: _isEditing,
             newItemBuilder: (index) => _RepeatableTeacher(id: '', index: index),
             widgetBuilder: (context, index, item, onUpdated) {

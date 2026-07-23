@@ -117,15 +117,18 @@ class TeacherPickerTile extends StatelessWidget {
             labelText: title ?? 'Sélectionner un·e enseignant·e',
             labelStyle: const TextStyle(color: Colors.black),
             errorText: state.errorText,
-            suffixIcon: IconButton(
-              onPressed: () {
-                if (focusNode.hasFocus) focusNode.previousFocus();
-                controller.teacher = null;
-                textController.clear();
-                state.didChange(null);
-              },
-              icon: const Icon(Icons.clear),
-            ),
+            border: editMode ? null : InputBorder.none,
+            suffixIcon: editMode
+                ? IconButton(
+                    onPressed: () {
+                      if (focusNode.hasFocus) focusNode.previousFocus();
+                      controller.teacher = null;
+                      textController.clear();
+                      state.didChange(null);
+                    },
+                    icon: const Icon(Icons.clear),
+                  )
+                : null,
           ),
         );
       },

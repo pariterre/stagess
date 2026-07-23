@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:stagess_admin/screens/teachers/confirm_delete_teacher_dialog.dart';
@@ -431,14 +432,15 @@ class TeacherListTileState extends State<TeacherListTile> {
         style: TextStyle(color: Colors.red),
       );
     }
-
+// TODO Add list of students which I am responsible for
     return _isEditing
         ? FormBuilderRadioGroup(
             key: _radioKey,
             initialValue: widget.teacher.schoolId,
             name: 'School selection',
             orientation: OptionsOrientation.vertical,
-            decoration: InputDecoration(labelText: 'Assigner à une école'),
+            decoration: InputDecoration(
+                labelText: 'Assigner à une école', border: InputBorder.none),
             onChanged: (value) =>
                 setState(() => _selectedSchoolId = value ?? '-1'),
             validator: (_) {
@@ -447,6 +449,7 @@ class TeacherListTileState extends State<TeacherListTile> {
                   : null;
             },
             options: schoolBoard.schools
+                .sorted((a, b) => a.name.compareTo(b.name))
                 .map(
                   (e) => FormBuilderFieldOption(
                     value: e.id,

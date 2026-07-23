@@ -249,6 +249,7 @@ class SchoolListTileState extends State<SchoolListTile> {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
+                // TODO: Add the capability for schoolAdmin to edit their own school
                 if (_isExpanded && _canEdit)
                   Row(
                     children: [

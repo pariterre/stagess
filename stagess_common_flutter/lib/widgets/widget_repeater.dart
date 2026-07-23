@@ -117,6 +117,7 @@ class TextFormRepeater<T extends RepeatableItem> extends StatelessWidget {
     this.canReorder = true,
     this.maxLength,
     this.maxLines = 5,
+    this.showSuffixIconOnDisabled = true,
   });
 
   final WidgetRepeaterController<T>? controller;
@@ -132,6 +133,7 @@ class TextFormRepeater<T extends RepeatableItem> extends StatelessWidget {
   final bool canReorder;
   final int? maxLength;
   final int maxLines;
+  final bool showSuffixIconOnDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +143,7 @@ class TextFormRepeater<T extends RepeatableItem> extends StatelessWidget {
       enabled: enabled,
       hasCheckboxes: hasCheckboxes,
       canReorder: canReorder,
+      showSuffixIconOnDisabled: showSuffixIconOnDisabled,
       minOptionCount: minOptionCount,
       maxOptionCount: maxOptionCount,
       maxSelectedOptions: maxSelectedOptions,
@@ -180,6 +183,7 @@ class WidgetRepeater<T extends RepeatableItem> extends StatefulWidget {
     this.buttonTitle,
     this.hasCheckboxes = true,
     this.canReorder = true,
+    this.showSuffixIconOnDisabled = true,
   });
 
   final WidgetRepeaterController<T>? controller;
@@ -193,6 +197,7 @@ class WidgetRepeater<T extends RepeatableItem> extends StatefulWidget {
   final String? buttonTitle;
   final bool hasCheckboxes;
   final bool canReorder;
+  final bool showSuffixIconOnDisabled;
 
   @override
   State<WidgetRepeater<T>> createState() => _WidgetRepeaterState<T>();
@@ -306,24 +311,25 @@ class _WidgetRepeaterState<T extends RepeatableItem>
           widget.widgetBuilder(context, i, _controller.options[i], (newItem) {
             _controller.updateOption(i, newItem);
           }),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: InkWell(
-              onTap: widget.enabled &&
-                      _controller.options.length > widget.minOptionCount
-                  ? () => _removeItem(i)
-                  : null,
-              borderRadius: BorderRadius.circular(25.0),
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Icon(Icons.delete,
-                    color: widget.enabled &&
-                            _controller.options.length > widget.minOptionCount
-                        ? Colors.red
-                        : Colors.grey),
+          if (widget.enabled || widget.showSuffixIconOnDisabled)
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: InkWell(
+                onTap: widget.enabled &&
+                        _controller.options.length > widget.minOptionCount
+                    ? () => _removeItem(i)
+                    : null,
+                borderRadius: BorderRadius.circular(25.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Icon(Icons.delete,
+                      color: widget.enabled &&
+                              _controller.options.length > widget.minOptionCount
+                          ? Colors.red
+                          : Colors.grey),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

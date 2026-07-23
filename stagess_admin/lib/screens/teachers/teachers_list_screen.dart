@@ -50,6 +50,7 @@ class _TeachersListScreenState extends State<TeachersListScreen> {
   Map<SchoolBoard, Map<School, List<Teacher>>> _getTeachers(
     BuildContext context,
   ) {
+    final authProvider = AuthProvider.of(context, listen: true);
     final teachersProvider = TeachersProvider.of(context, listen: true);
     final schoolBoards = SchoolBoardsProvider.of(context, listen: true);
 
@@ -59,6 +60,11 @@ class _TeachersListScreenState extends State<TeachersListScreen> {
       final teachersBySchool = <School, List<Teacher>>{};
 
       for (final school in schoolBoard.schools) {
+        if (authProvider.databaseAccessLevel <= AccessLevel.schoolAdmin &&
+            authProvider.schoolId != school.id) {
+          // Skip schools that the user does not have access to
+          continue;
+        }
         final schoolTeachers = teachersProvider
             .where((teacher) => teacher.schoolId == school.id)
             .toList();

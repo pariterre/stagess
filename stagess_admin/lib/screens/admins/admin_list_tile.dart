@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:stagess_admin/screens/admins/confirm_delete_admin_dialog.dart';
@@ -393,8 +394,7 @@ class AdminListTileState extends State<AdminListTile> {
             name: 'School selection',
             orientation: OptionsOrientation.vertical,
             decoration: InputDecoration(
-              labelText: 'Assigner à une école',
-            ),
+                labelText: 'Assigner à une école', border: InputBorder.none),
             onChanged: (value) =>
                 setState(() => _selectedSchoolId = value ?? ''),
             options: [
@@ -402,7 +402,7 @@ class AdminListTileState extends State<AdminListTile> {
                       AccessLevel.superAdmin
                   ? [null]
                   : []),
-              ...schoolBoard.schools
+              ...schoolBoard.schools.sorted((a, b) => a.name.compareTo(b.name))
             ]
                 .map(
                   (e) => FormBuilderFieldOption(

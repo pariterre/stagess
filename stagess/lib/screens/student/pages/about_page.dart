@@ -336,7 +336,9 @@ class AboutPageState extends State<AboutPage> {
               child: Text(
                 _editing
                     ? 'Sélectionner l\'enseignant·e responsable'
-                    : 'Enseignant·e responsable',
+                    : _teacherInChargeIdController.teacher == null
+                        ? 'Aucun·e enseignant·e responsable'
+                        : 'Enseignant·e responsable',
               ),
             ),
             Padding(
@@ -358,13 +360,14 @@ class AboutPageState extends State<AboutPage> {
             ),
           ],
         ),
-        TeacherPickerTile(
-          controller: _teacherInChargeIdController,
-          title: 'Nom de l\'enseignant·e',
-          filter: (teacher) =>
-              teacher.schoolBoardId == widget.student.schoolBoardId,
-          editMode: _editing,
-        ),
+        if (_editing || _teacherInChargeIdController.teacher != null)
+          TeacherPickerTile(
+            controller: _teacherInChargeIdController,
+            title: 'Nom de l\'enseignant·e',
+            filter: (teacher) =>
+                teacher.schoolBoardId == widget.student.schoolBoardId,
+            editMode: _editing,
+          ),
       ],
     );
   }
@@ -381,7 +384,7 @@ class AboutPageState extends State<AboutPage> {
                 _editing
                     ? 'Sélectionner les intervenant·e·s supplémentaires'
                     : _supplementaryTeacherInChargeIdsController.options.isEmpty
-                        ? 'Aucun·e intervenant·e supplémentaire sélectionné·e'
+                        ? 'Aucun·e intervenant·e supplémentaire'
                         : 'Intervenant·e·s supplémentaires',
               ),
             ),

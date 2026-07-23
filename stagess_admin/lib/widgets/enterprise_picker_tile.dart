@@ -187,16 +187,19 @@ class EnterprisePickerTile extends StatelessWidget {
           decoration: InputDecoration(
             labelText: title ?? 'Sélectionner une entreprise',
             labelStyle: const TextStyle(color: Colors.black),
+            border: editMode ? null : InputBorder.none,
             errorText: state.errorText,
-            suffixIcon: IconButton(
-              onPressed: () {
-                if (focusNode.hasFocus) focusNode.previousFocus();
-                controller.enterprise = Enterprise.empty;
-                textController.clear();
-                state.didChange(Enterprise.empty);
-              },
-              icon: const Icon(Icons.clear),
-            ),
+            suffixIcon: editMode
+                ? IconButton(
+                    onPressed: () {
+                      if (focusNode.hasFocus) focusNode.previousFocus();
+                      controller.enterprise = Enterprise.empty;
+                      textController.clear();
+                      state.didChange(Enterprise.empty);
+                    },
+                    icon: const Icon(Icons.clear),
+                  )
+                : null,
           ),
         );
       },
