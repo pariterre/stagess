@@ -71,6 +71,7 @@ class StudentPickerTile extends StatelessWidget {
         (student) => controller._studentWhiteList!.contains(student),
       );
     }
+    students.sort((a, b) => a.lastName.compareTo(b.lastName));
 
     return Autocomplete<Student>(
       initialValue: TextEditingValue(

@@ -7,11 +7,13 @@ import 'package:stagess_common/models/enterprises/enterprise.dart';
 import 'package:stagess_common/models/enterprises/enterprise_status.dart';
 import 'package:stagess_common/models/enterprises/job.dart';
 import 'package:stagess_common/models/enterprises/job_list.dart';
+import 'package:stagess_common/models/generic/access_level.dart';
 import 'package:stagess_common/models/generic/fetchable_fields.dart';
 import 'package:stagess_common/models/generic/phone_number.dart';
 import 'package:stagess_common/models/school_boards/school_board.dart';
 import 'package:stagess_common/utils.dart';
 import 'package:stagess_common_flutter/helpers/configuration_service.dart';
+import 'package:stagess_common_flutter/providers/auth_provider.dart';
 import 'package:stagess_common_flutter/providers/enterprises_provider.dart';
 import 'package:stagess_common_flutter/providers/internships_provider.dart';
 import 'package:stagess_common_flutter/providers/school_boards_provider.dart';
@@ -108,6 +110,14 @@ class EnterpriseListTileState extends State<EnterpriseListTile> {
     BuildContext context, {
     required Job job,
   }) {
+    final auth = AuthProvider.of(context, listen: false);
+    final teachers = [...TeachersProvider.of(context, listen: false)];
+    if (auth.databaseAccessLevel < AccessLevel.schoolBoardAdmin) {
+      teachers.retainWhere(
+        (teacher) => teacher.schoolId == auth.schoolId,
+      );
+    }
+
     return EnterpriseJobListController(
       context: context,
       enterpriseId: widget.enterprise.id,
@@ -117,7 +127,7 @@ class EnterpriseListTileState extends State<EnterpriseListTile> {
       reservedForPickerController: EntityPickerController(
         allElementsTitle: 'Tous les enseignant\u00b7e\u00b7s',
         schools: [],
-        teachers: [...TeachersProvider.of(context, listen: false)],
+        teachers: teachers,
         initialId: job.reservedForId,
       ),
     );
@@ -635,6 +645,14 @@ class EnterpriseListTileState extends State<EnterpriseListTile> {
     final job = Job.empty;
     setState(
       () {
+        final auth = AuthProvider.of(context, listen: false);
+        final teachers = [...TeachersProvider.of(context, listen: false)];
+        if (auth.databaseAccessLevel < AccessLevel.schoolBoardAdmin) {
+          teachers.retainWhere(
+            (teacher) => teacher.schoolId == auth.schoolId,
+          );
+        }
+
         _jobControllers[job.id] = EnterpriseJobListController(
           context: context,
           enterpriseId: widget.enterprise.id,
@@ -643,7 +661,7 @@ class EnterpriseListTileState extends State<EnterpriseListTile> {
           reservedForPickerController: EntityPickerController(
             allElementsTitle: 'Tous les enseignant\u00b7e\u00b7s',
             schools: _currentSchoolBoard?.schools ?? [],
-            teachers: [...TeachersProvider.of(context, listen: false)],
+            teachers: teachers,
             initialId: job.reservedForId,
           ),
         );
@@ -662,17 +680,6 @@ class EnterpriseListTileState extends State<EnterpriseListTile> {
   Widget _buildJobs() {
     return Column(
       children: [
-        if (_isEditing)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
-              child: TextButton(
-                onPressed: _addJob,
-                child: const Text('Ajouter un nouveau métier'),
-              ),
-            ),
-          ),
         _jobControllers.isEmpty
             ? Padding(
                 padding:
@@ -706,12 +713,24 @@ class EnterpriseListTileState extends State<EnterpriseListTile> {
                           widget.enterprise.jobs.any(
                             (job) => job.id == jobId,
                           ),
+                      showJobNameTitle: widget.forceEditingMode,
                       onChangingImage: (isDone) =>
                           isDone ? _unlockUI() : _lockUI(),
                     );
                   }),
                 ],
               ),
+        if (_isEditing)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
+              child: TextButton(
+                onPressed: _addJob,
+                child: const Text('Ajouter un nouveau métier'),
+              ),
+            ),
+          ),
       ],
     );
   }

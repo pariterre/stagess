@@ -121,6 +121,7 @@ class EnterpriseJobListTile extends StatefulWidget {
     this.showHeader = true,
     this.jobPickerPadding,
     this.availabilityIsMandatory = false,
+    this.showJobNameTitle = true,
     this.showExtended = false,
     this.onChangingImage,
   });
@@ -137,6 +138,7 @@ class EnterpriseJobListTile extends StatefulWidget {
   final bool showHeader;
   final EdgeInsets? jobPickerPadding;
   final bool availabilityIsMandatory;
+  final bool showJobNameTitle;
   final bool showExtended;
   final void Function(bool isDone)? onChangingImage;
 
@@ -258,10 +260,11 @@ class _EnterpriseJobListTileState extends State<EnterpriseJobListTile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: _buildJobPicker(),
-            ),
+            if (widget.showJobNameTitle)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: _buildJobPicker(),
+              ),
             if (!widget.specializationOnly)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,6 +331,7 @@ class _EnterpriseJobListTileState extends State<EnterpriseJobListTile> {
                   textEditingValue.text.toLowerCase().trim(),
                 ),
           )
+          .sorted((a, b) => a.name.compareTo(b.name))
           .toList(),
       optionsViewBuilder: (context, onSelected, options) =>
           OptionsBuilderForAutocomplete(

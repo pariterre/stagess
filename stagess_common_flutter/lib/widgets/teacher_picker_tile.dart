@@ -56,6 +56,7 @@ class TeacherPickerTile extends StatelessWidget {
   Widget _builder(BuildContext context, FormFieldState<Teacher> state) {
     final teachers = TeachersProvider.of(context, listen: true).toList();
     if (filter != null) teachers.retainWhere(filter!);
+    teachers.sort((a, b) => a.lastName.compareTo(b.lastName));
 
     return Autocomplete<Teacher>(
       initialValue: TextEditingValue(
