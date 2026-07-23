@@ -9,6 +9,7 @@ import 'package:stagess_common/models/internships/internship.dart';
 import 'package:stagess_common/models/persons/teacher.dart';
 import 'package:stagess_common/models/school_boards/school.dart';
 import 'package:stagess_common/models/school_boards/school_board.dart';
+import 'package:stagess_common_flutter/helpers/configuration_service.dart';
 import 'package:stagess_common_flutter/helpers/responsive_service.dart';
 import 'package:stagess_common_flutter/providers/auth_provider.dart';
 import 'package:stagess_common_flutter/providers/enterprises_provider.dart';
@@ -172,11 +173,12 @@ class _InternshipsListScreenState extends State<InternshipsListScreen> {
             icon: const Icon(Icons.search),
             tooltip: 'Rechercher un stage',
           ),
-          IconButton(
-            onPressed: () => _showAddInternshipDialog(context),
-            icon: Icon(Icons.add),
-            tooltip: 'Ajouter un stage',
-          ),
+          if (ConfigurationService.showDevelopmentFeatures)
+            IconButton(
+              onPressed: () => _showAddInternshipDialog(context),
+              icon: Icon(Icons.add),
+              tooltip: 'Ajouter un stage',
+            ),
         ],
       ),
       smallDrawer: MainDrawer.small,
