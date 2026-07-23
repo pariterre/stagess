@@ -168,6 +168,7 @@ class PostInternshipEnterpriseEvaluation extends InternshipEvaluation {
         'id': FetchableFields.mandatory,
         'date': FetchableFields.optional,
         'internship_id': FetchableFields.mandatory,
+        'program': FetchableFields.optional,
         'skills_required': FetchableFields.optional,
         'task_variety': FetchableFields.optional,
         'training_plan_respect': FetchableFields.optional,
