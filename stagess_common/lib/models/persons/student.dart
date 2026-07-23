@@ -58,6 +58,8 @@ class Student extends Person with SchoolMember {
   final String teacherInChargeId;
   final List<String> supplementaryTeacherInChargeIds;
 
+  final bool canHaveMultipleInternships;
+
   final String photo;
 
   final Program program;
@@ -80,6 +82,7 @@ class Student extends Person with SchoolMember {
         address: Address.empty,
         teacherInChargeId: '',
         supplementaryTeacherInChargeIds: [],
+        canHaveMultipleInternships: false,
         program: Program.undefined,
         group: '-1',
         contact: Person.empty,
@@ -100,6 +103,7 @@ class Student extends Person with SchoolMember {
     String? photo,
     required this.teacherInChargeId,
     required this.supplementaryTeacherInChargeIds,
+    required this.canHaveMultipleInternships,
     required this.program,
     required this.group,
     required this.contact,
@@ -122,6 +126,8 @@ class Student extends Person with SchoolMember {
                 map?['supplementary_teacher_in_charge_ids'],
                 deserializer: (map) => StringExt.from(map) ?? '') ??
             [],
+        canHaveMultipleInternships =
+            BoolExt.from(map?['can_have_multiple_internships']) ?? false,
         group = StringExt.from(map?['group']) ?? '-1',
         contact = Person.fromSerialized(map?['contact'] ?? {}),
         contactLink = StringExt.from(map?['contact_link']) ?? '',
@@ -144,6 +150,7 @@ class Student extends Person with SchoolMember {
         'teacher_in_charge_id': teacherInChargeId.serialize(),
         'supplementary_teacher_in_charge_ids':
             supplementaryTeacherInChargeIds.serialize(),
+        'can_have_multiple_internships': canHaveMultipleInternships.serialize(),
         'group': group.serialize(),
         'contact': contact.serialize(),
         'contact_link': contactLink.serialize(),
@@ -159,6 +166,7 @@ class Student extends Person with SchoolMember {
       'program': FetchableFields.mandatory,
       'teacher_in_charge_id': FetchableFields.mandatory,
       'supplementary_teacher_in_charge_ids': FetchableFields.mandatory,
+      'can_have_multiple_internships': FetchableFields.mandatory,
       'group': FetchableFields.mandatory,
       'contact': FetchableFields.optional,
       'contact_link': FetchableFields.optional,
@@ -184,6 +192,7 @@ class Student extends Person with SchoolMember {
     Program? program,
     String? teacherInChargeId,
     List<String>? supplementaryTeacherInChargeIds,
+    bool? canHaveMultipleInternships,
     String? group,
     Person? contact,
     String? contactLink,
@@ -203,6 +212,8 @@ class Student extends Person with SchoolMember {
         teacherInChargeId: teacherInChargeId ?? this.teacherInChargeId,
         supplementaryTeacherInChargeIds: supplementaryTeacherInChargeIds ??
             this.supplementaryTeacherInChargeIds,
+        canHaveMultipleInternships:
+            canHaveMultipleInternships ?? this.canHaveMultipleInternships,
         group: group ?? this.group,
         contact: contact ?? this.contact,
         contactLink: contactLink ?? this.contactLink,
@@ -229,6 +240,7 @@ class Student extends Person with SchoolMember {
           'photo',
           'teacher_in_charge_id',
           'supplementary_teacher_in_charge_ids',
+          'can_have_multiple_internships',
           'program',
           'group',
           'contact',
@@ -258,6 +270,9 @@ class Student extends Person with SchoolMember {
               data['supplementary_teacher_in_charge_ids'],
               deserializer: (map) => StringExt.from(map) ?? '') ??
           supplementaryTeacherInChargeIds,
+      canHaveMultipleInternships:
+          BoolExt.from(data['can_have_multiple_internships']) ??
+              canHaveMultipleInternships,
       contact: contact.copyWithData(data['contact']),
       contactLink: StringExt.from(data['contact_link']) ?? contactLink,
       allVisa: ListExt.from(data['all_visa'],

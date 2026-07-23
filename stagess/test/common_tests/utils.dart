@@ -101,6 +101,7 @@ Student dummyStudent({
     group: group,
     teacherInChargeId: '',
     supplementaryTeacherInChargeIds: [],
+    canHaveMultipleInternships: false,
     program: program,
     allVisa: [dummyStudentVisa()],
   );

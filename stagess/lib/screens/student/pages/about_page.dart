@@ -57,6 +57,8 @@ class AboutPageState extends State<AboutPage> {
         .values
         .toList(),
   );
+  late bool _canHaveMultipleInternshipsController =
+      widget.student.canHaveMultipleInternships;
   late final _contactFirstNameController =
       TextEditingController(text: widget.student.contact.firstName);
   late final _contactLastNameController =
@@ -92,6 +94,7 @@ class AboutPageState extends State<AboutPage> {
               _buildGeneralInformation(),
               _buildEmergencyContact(),
               _buildTeacherInChargeTile(),
+              _buildSupplementaryInformation(),
               SizedBox(height: MediaQuery.of(context).size.height * 0.5),
             ],
           ),
@@ -114,6 +117,7 @@ class AboutPageState extends State<AboutPage> {
               .where((e) => e != null && e.isNotEmpty)
               .cast<String>()
               .toList(),
+      canHaveMultipleInternships: _canHaveMultipleInternshipsController,
       contact: widget.student.contact.copyWith(
         firstName: _contactFirstNameController.text,
         lastName: _contactLastNameController.text,
@@ -144,6 +148,8 @@ class AboutPageState extends State<AboutPage> {
             context: context),
       );
     }
+    _canHaveMultipleInternshipsController =
+        widget.student.canHaveMultipleInternships;
     _contactFirstNameController.text = widget.student.contact.firstName;
     _contactLastNameController.text = widget.student.contact.lastName;
     _contactLinkController.text = widget.student.contactLink;
@@ -418,6 +424,55 @@ class AboutPageState extends State<AboutPage> {
             },
           ),
       ],
+    );
+  }
+
+  Widget _buildSupplementaryInformation() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SubTitle('Informations supplémentaires', left: 0.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: InkWell(
+              onTap: _editing
+                  ? () {
+                      setState(() {
+                        _canHaveMultipleInternshipsController =
+                            !_canHaveMultipleInternshipsController;
+                      });
+                    }
+                  : null,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Checkbox(
+                    value: _canHaveMultipleInternshipsController,
+                    onChanged: _editing
+                        ? (value) {
+                            setState(() {
+                              _canHaveMultipleInternshipsController = value!;
+                            });
+                          }
+                        : null,
+                  ),
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Text(
+                        'Cet élève peut avoir plusieurs stages actifs simultanément',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

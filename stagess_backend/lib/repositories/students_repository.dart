@@ -577,6 +577,8 @@ class MySqlStudentsRepository extends StudentsRepository {
       'program': student.programSerialized,
       'group_name': student.group.serialize(),
       'teacher_in_charge_id': student.teacherInChargeId.serialize(),
+      'can_have_multiple_internships':
+          student.canHaveMultipleInternships.serialize(),
       'contact_link': student.contactLink.serialize(),
     });
   }
@@ -650,6 +652,11 @@ class MySqlStudentsRepository extends StudentsRepository {
       toUpdate['teacher_in_charge_id'] = student.teacherInChargeId.isEmpty
           ? null
           : student.teacherInChargeId.serialize();
+    }
+    if (student.canHaveMultipleInternships !=
+        previous.canHaveMultipleInternships) {
+      toUpdate['can_have_multiple_internships'] =
+          student.canHaveMultipleInternships.serialize();
     }
     if (student.contactLink != previous.contactLink) {
       toUpdate['contact_link'] = student.contactLink.serialize();
@@ -932,6 +939,7 @@ class StudentsRepositoryMock extends StudentsRepository {
       group: 'A',
       teacherInChargeId: '',
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
           id: '1',
           firstName: 'Jane',
@@ -957,6 +965,7 @@ class StudentsRepositoryMock extends StudentsRepository {
       group: 'A',
       teacherInChargeId: '',
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
           id: '0',
           firstName: 'John',

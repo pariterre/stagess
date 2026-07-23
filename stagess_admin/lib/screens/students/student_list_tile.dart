@@ -186,6 +186,8 @@ class StudentListTileState extends State<StudentListTile> {
         .values
         .toList(),
   );
+  late bool _canHaveMultipleInternshipsController =
+      widget.student.canHaveMultipleInternships;
   late Program _selectedProgram = widget.student.program;
   late final _emailController = TextEditingController(
     text: widget.student.email,
@@ -222,6 +224,7 @@ class StudentListTileState extends State<StudentListTile> {
                 .map((e) => e.controller.teacher?.id ?? '')
                 .where((e) => e.isNotEmpty)
                 .toList(),
+        canHaveMultipleInternships: _canHaveMultipleInternshipsController,
         program: _selectedProgram,
         address: _addressController.address ??
             Address.empty.copyWith(id: widget.student.address.id),
@@ -388,6 +391,8 @@ class StudentListTileState extends State<StudentListTile> {
         ),
       );
     }
+    _canHaveMultipleInternshipsController =
+        widget.student.canHaveMultipleInternships;
     _selectedProgram = widget.student.program;
 
     _contactFirstNameController.text = widget.student.contact.firstName;
@@ -536,6 +541,8 @@ class StudentListTileState extends State<StudentListTile> {
                 const SizedBox(height: 24),
                 _buildSupplementaryTeachersInCharge(),
                 const SizedBox(height: 24),
+                _buildCanHaveMultipleInternships(),
+                const SizedBox(height: 8),
                 _buildProgramSelection(),
                 const SizedBox(height: 8),
                 _buildBirthday(),
@@ -750,6 +757,41 @@ class StudentListTileState extends State<StudentListTile> {
             },
           ),
       ],
+    );
+  }
+
+  Widget _buildCanHaveMultipleInternships() {
+    return InkWell(
+      onTap: _isEditing
+          ? () {
+              setState(() {
+                _canHaveMultipleInternshipsController =
+                    !_canHaveMultipleInternshipsController;
+              });
+            }
+          : null,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Checkbox(
+            value: _canHaveMultipleInternshipsController,
+            onChanged: _isEditing
+                ? (value) {
+                    setState(() {
+                      _canHaveMultipleInternshipsController = value ?? false;
+                    });
+                  }
+                : null,
+          ),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Text(
+                  'Cet élève peut être assigné à plusieurs stages simultanément'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

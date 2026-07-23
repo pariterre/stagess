@@ -490,6 +490,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [teacherA11.id],
+      canHaveMultipleInternships: true,
       address: Address(
         civicNumber: 7248,
         street: 'Rue D\'Iberville',
@@ -640,6 +641,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Jean-Pierre',
         lastName: 'Caron Mathieu',
@@ -674,6 +676,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Nicole',
         lastName: 'Lefranc',
@@ -708,6 +711,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Martine',
         lastName: 'Gagnon',
@@ -742,6 +746,7 @@ Future<void> _addDummyStudents(
       group: '201',
       teacherInChargeId: teacherB1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Raoul',
         lastName: 'Gingras',
@@ -776,6 +781,7 @@ Future<void> _addDummyStudents(
       group: '200',
       teacherInChargeId: teacherB1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Laura',
         lastName: 'Vargas',
@@ -817,6 +823,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Vincent',
         lastName: 'Tremblay',
@@ -985,6 +992,7 @@ Future<void> _addDummyStudents(
       group: '551',
       teacherInChargeId: teacherA2.id,
       supplementaryTeacherInChargeIds: [teacherA1.id],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Jean-François',
         lastName: 'Picard',
@@ -1019,6 +1027,7 @@ Future<void> _addDummyStudents(
       group: '551',
       teacherInChargeId: teacherA2.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Stéphane',
         lastName: 'Monette',
@@ -1053,6 +1062,7 @@ Future<void> _addDummyStudents(
       group: '551',
       teacherInChargeId: teacherA2.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Mathieu',
         lastName: 'Poulain',
@@ -1087,6 +1097,7 @@ Future<void> _addDummyStudents(
       group: '551',
       teacherInChargeId: teacherA2.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Sandrine',
         lastName: 'Poulain',
@@ -1121,6 +1132,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Dominique',
         lastName: 'Marien',
@@ -1155,6 +1167,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Antoine',
         lastName: 'Lamotte',
@@ -1189,6 +1202,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Marie',
         lastName: 'Lerouge',
@@ -1223,6 +1237,7 @@ Future<void> _addDummyStudents(
       group: '551',
       teacherInChargeId: teacherA2.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'François',
         lastName: 'Cloutier',
@@ -1257,6 +1272,7 @@ Future<void> _addDummyStudents(
       group: '551',
       teacherInChargeId: teacherA2.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Martine',
         lastName: 'Rousseau',
@@ -1291,6 +1307,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Jessica',
         lastName: 'Brière',
@@ -1325,6 +1342,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Daniel',
         lastName: 'Adam',
@@ -1359,6 +1377,7 @@ Future<void> _addDummyStudents(
       group: '550',
       teacherInChargeId: teacherA1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Romain',
         lastName: 'Vachon',
@@ -1393,6 +1412,7 @@ Future<void> _addDummyStudents(
       group: '551',
       teacherInChargeId: teacherA2.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Patricia',
         lastName: 'Leduc',
@@ -1426,6 +1446,7 @@ Future<void> _addDummyStudents(
       group: '300',
       teacherInChargeId: teacherC1.id,
       supplementaryTeacherInChargeIds: [],
+      canHaveMultipleInternships: false,
       contact: Person(
         firstName: 'Tony',
         lastName: 'Desmarais',

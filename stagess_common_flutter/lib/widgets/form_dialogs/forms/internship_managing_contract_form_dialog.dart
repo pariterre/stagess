@@ -1076,7 +1076,10 @@ List<Student> _studentsWithoutInternship(
     BuildContext context, List<Student> students) {
   final List<Student> out = [];
   for (final student in students) {
-    if (!student.hasActiveInternship(context)) out.add(student);
+    if (student.canHaveMultipleInternships ||
+        !student.hasActiveInternship(context)) {
+      out.add(student);
+    }
   }
 
   return out;

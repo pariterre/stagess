@@ -232,6 +232,7 @@ CREATE TABLE students (
     program INT NOT NULL,
     group_name VARCHAR(50) NOT NULL,
     teacher_in_charge_id VARCHAR(36),
+    can_have_multiple_internships BOOLEAN NOT NULL,
     contact_link VARCHAR(50) NOT NULL,
     FOREIGN KEY (id) REFERENCES persons(id) ON DELETE CASCADE,
     FOREIGN KEY (school_board_id) REFERENCES school_boards(id) ON DELETE CASCADE,
