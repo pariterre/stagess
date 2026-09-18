@@ -56,6 +56,7 @@ class SchoolStudentsCard extends StatelessWidget {
                   (group) => Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: _GroupStudentsCard(
+                      schoolId: schoolId,
                       group: group,
                       students: studentsByGroups[group] ?? [],
                       filteredStudentIds: filteredStudentIds,
@@ -72,11 +73,13 @@ class SchoolStudentsCard extends StatelessWidget {
 
 class _GroupStudentsCard extends StatelessWidget {
   const _GroupStudentsCard({
+    required this.schoolId,
     required this.group,
     required this.students,
     required this.filteredStudentIds,
   });
 
+  final String schoolId;
   final String group;
   final List<Student> students;
   final List<String>? filteredStudentIds;
@@ -86,7 +89,8 @@ class _GroupStudentsCard extends StatelessWidget {
     final authProvider = AuthProvider.of(context, listen: true);
     final teacherProvided = TeachersProvider.of(context, listen: false);
     final teachers = teacherProvided
-        .where((teacher) => teacher.groups.contains(group))
+        .where((teacher) =>
+            teacher.schoolId == schoolId && teacher.groups.contains(group))
         .toList();
     teachers.sort((a, b) {
       final teacherA = a.lastName.toLowerCase();
