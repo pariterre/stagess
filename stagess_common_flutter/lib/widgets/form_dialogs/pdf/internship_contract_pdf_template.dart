@@ -41,6 +41,15 @@ String _title(Program program) {
   }
 }
 
+String _normalizeText(String text) {
+  return text
+      .replaceAll('\n', ' ')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim()
+      .replaceAll('\u00A0', ' ')
+      .replaceAll('’', '\'');
+}
+
 Future<Uint8List> generateInternshipContractPdf(
     BuildContext mainContext, PdfPageFormat format,
     {required String internshipId, required String contractId}) async {
@@ -181,7 +190,7 @@ pw.Widget _coverPage({
                   style: _textStyle.copyWith(fontSize: 16),
                 ),
                 pw.Text(
-                    '${schoolBoard.name.toUpperCase()} $dash ELEVE $dash ENTREPRISE $dash SUPERVISEUR DE STAGE $dash ECOLE',
+                    '${_normalizeText(schoolBoard.name).toUpperCase()} $dash ELEVE $dash ENTREPRISE $dash SUPERVISEUR DE STAGE $dash ECOLE',
                     style: _textStyle.copyWith(fontSize: 16),
                     textAlign: pw.TextAlign.center),
               ],
@@ -217,7 +226,7 @@ pw.Widget _studentObligations({
             text: pw.TextSpan(children: [
           pw.TextSpan(text: 'Je, soussigné${mid}e, ', style: _textStyle),
           pw.TextSpan(
-              text: student.fullName.toUpperCase(),
+              text: _normalizeText(student.fullName).toUpperCase(),
               style:
                   _textStyle.copyWith(decoration: pw.TextDecoration.underline)),
           pw.TextSpan(text: ', m\'engage :', style: _textStyle),
@@ -235,7 +244,7 @@ pw.Widget _studentObligations({
                       'de l\'entreprise et l\'école secondaire ',
                   style: _textStyle),
               pw.TextSpan(
-                  text: school.name.toUpperCase(),
+                  text: _normalizeText(school.name).toUpperCase(),
                   style: _textStyle.copyWith(
                       decoration: pw.TextDecoration.underline)),
               pw.TextSpan(text: ';', style: _textStyle),
@@ -254,7 +263,7 @@ pw.Widget _studentObligations({
                       'de l\'école secondaire ',
                   style: _textStyle),
               pw.TextSpan(
-                  text: school.name.toUpperCase(),
+                  text: _normalizeText(school.name).toUpperCase(),
                   style: _textStyle.copyWith(
                       decoration: pw.TextDecoration.underline)),
               pw.TextSpan(
@@ -295,7 +304,7 @@ pw.Widget _studentObligations({
                       'À faire toute la période de formation exigée par l\'école secondaire ',
                   style: _textStyle),
               pw.TextSpan(
-                  text: school.name.toUpperCase(),
+                  text: _normalizeText(school.name).toUpperCase(),
                   style: _textStyle.copyWith(
                       decoration: pw.TextDecoration.underline)),
               pw.TextSpan(
@@ -329,7 +338,7 @@ pw.Widget _studentObligations({
           textAlign: pw.TextAlign.justify,
           text: pw.TextSpan(
               text:
-                  'À suivre les règlements de l\'ENTREPRISE et du ${schoolBoard.name.toUpperCase()} '
+                  'À suivre les règlements de l\'ENTREPRISE et du ${_normalizeText(schoolBoard.name).toUpperCase()} '
                   'en me conformant aux politiques, directives et pratiques courantes dont on m\'aura '
                   'préalablement informé${mid}e, notamment les règles d\'utilisation du matériel '
                   'informatique et technologique (cellulaire, internet, réseaux sociaux, etc.);',
@@ -397,7 +406,8 @@ pw.Widget _contract({
           ),
           padding:
               const pw.EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-          child: pw.Text('Entre le ${schoolBoard.name.toUpperCase()}',
+          child: pw.Text(
+              'Entre le ${_normalizeText(schoolBoard.name).toUpperCase()}',
               style: _textStyleBold.copyWith(fontSize: 16))),
       pw.SizedBox(height: 16),
       pw.Container(
@@ -407,7 +417,8 @@ pw.Widget _contract({
           ),
           padding:
               const pw.EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-          child: pw.Text('L\'école ${school.name.toUpperCase()}',
+          child: pw.Text(
+              'L\'école ${_normalizeText(school.name).toUpperCase()}',
               style: _textStyleBold.copyWith(fontSize: 16))),
       pw.SizedBox(height: 16),
       pw.Container(
@@ -417,7 +428,7 @@ pw.Widget _contract({
           ),
           padding:
               const pw.EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-          child: pw.Text('Et l\'entreprise ${enterprise.name}',
+          child: pw.Text('Et l\'entreprise ${_normalizeText(enterprise.name)}',
               style: _textStyleBold.copyWith(fontSize: 16))),
       pw.SizedBox(height: 24),
       pw.Padding(
@@ -506,7 +517,7 @@ pw.Widget _contract({
                       'ou l\'enseignante responsable des stages de l\'école secondaire ',
                   style: _textStyle),
               pw.TextSpan(
-                  text: school.name.toUpperCase(),
+                  text: _normalizeText(school.name).toUpperCase(),
                   style: _textStyle.copyWith(
                       decoration: pw.TextDecoration.underline)),
               pw.TextSpan(text: ';', style: _textStyle)
@@ -542,7 +553,7 @@ pw.Widget _contract({
             children: [
               pw.TextSpan(text: 'Que le ', style: _textStyle),
               pw.TextSpan(
-                  text: schoolBoard.name.toUpperCase(),
+                  text: _normalizeText(schoolBoard.name).toUpperCase(),
                   style: _textStyle.copyWith(
                       decoration: pw.TextDecoration.underline)),
               pw.TextSpan(
@@ -550,7 +561,7 @@ pw.Widget _contract({
                       'la protection assurée par la Loi. Le numéro de dossier du ',
                   style: _textStyle),
               pw.TextSpan(
-                  text: schoolBoard.name.toUpperCase(),
+                  text: _normalizeText(schoolBoard.name).toUpperCase(),
                   style: _textStyle.copyWith(
                       decoration: pw.TextDecoration.underline)),
               pw.TextSpan(
@@ -573,7 +584,7 @@ pw.Widget _contract({
             children: [
               pw.TextSpan(text: 'Que le ', style: _textStyle),
               pw.TextSpan(
-                  text: schoolBoard.name.toUpperCase(),
+                  text: _normalizeText(schoolBoard.name).toUpperCase(),
                   style: _textStyle.copyWith(
                       decoration: pw.TextDecoration.underline)),
               pw.TextSpan(
@@ -619,7 +630,9 @@ pw.Widget _signature({required Person? person, required String role}) {
           pw.Row(children: [
             pw.Text('Signature de ', style: _textStyle),
             pw.Text(
-                person == null ? '_______________________' : person.fullName,
+                person == null
+                    ? '_______________________'
+                    : _normalizeText(person.fullName),
                 style: _textStyleItalic),
           ]),
           pw.Text(role, style: _textStyle),
@@ -647,7 +660,8 @@ pw.Widget _studentInformations({
           style: _textStyleBold.copyWith(fontSize: 18)),
       pw.SizedBox(height: 16),
       _textCell(
-          title: 'Nom du stagiaire', content: student.fullName.toUpperCase()),
+          title: 'Nom du stagiaire',
+          content: _normalizeText(student.fullName).toUpperCase()),
       pw.Row(children: [
         pw.Expanded(
             child: _textCell(
@@ -671,13 +685,13 @@ pw.Widget _studentInformations({
               : '${DateTime.now().difference(student.dateBirth!).inDays ~/ 365} ans'),
       _textCell(
         title: 'Nom de l\'enseignant responsable',
-        content: teacher.fullName.toUpperCase(),
+        content: _normalizeText(teacher.fullName).toUpperCase(),
         sameLine: false,
       ),
       _textCell(
         title: 'Nom, adresse et téléphone de l\'école',
-        content: '${school.name.toUpperCase()}\n'
-            '${school.address.toString()}\n'
+        content: '${_normalizeText(school.name).toUpperCase()}\n'
+            '${_normalizeText(school.address.toString())}\n'
             '${school.phone.toString().isEmpty ? 'N/A' : school.phone.toString()}',
         sameLine: false,
       ),
@@ -713,13 +727,13 @@ pw.Widget _studentInformations({
       ),
       _textCell(
         title: 'Nom du parrain dans l\'entreprise',
-        content: contract.supervisor.fullName.toUpperCase(),
+        content: _normalizeText(contract.supervisor.fullName).toUpperCase(),
         sameLine: false,
       ),
       _textCell(
         title: 'Nom, adresse et téléphone de l\'entreprise',
-        content: '${enterprise.name.toUpperCase()}\n'
-            '${enterprise.address.toString()}\n'
+        content: '${_normalizeText(enterprise.name).toUpperCase()}\n'
+            '${_normalizeText(enterprise.address.toString())}\n'
             '${enterprise.phone.toString()}',
         sameLine: false,
       ),
