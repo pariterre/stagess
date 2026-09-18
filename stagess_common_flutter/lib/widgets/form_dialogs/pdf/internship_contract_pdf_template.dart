@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:stagess_common/models/enterprises/enterprise.dart';
+import 'package:stagess_common/models/generic/fetchable_fields.dart';
 import 'package:stagess_common/models/internships/internship_contract.dart';
 import 'package:stagess_common/models/internships/schedule.dart';
 import 'package:stagess_common/models/internships/transportation.dart';
@@ -63,6 +64,10 @@ Future<Uint8List> generateInternshipContractPdf(
       InternshipsProvider.of(mainContext, listen: false).fromId(internshipId);
   final student = StudentsProvider.of(mainContext, listen: false)
       .fromId(internship.studentId);
+
+  await SchoolBoardsProvider.of(mainContext, listen: false)
+      .fetchData(id: student.schoolBoardId, fields: FetchableFields.all);
+  if (!mainContext.mounted) return Uint8List(0);
 
   final schoolBoard = SchoolBoardsProvider.of(mainContext, listen: false)
       .fromId(student.schoolBoardId);
@@ -666,22 +671,21 @@ pw.Widget _studentInformations({
         pw.Expanded(
             child: _textCell(
           title: 'Téléphone',
-          content: student.phone.toString().isEmpty
-              ? 'N/A'
-              : student.phone.toString(),
+          content:
+              student.phone.toString().isEmpty ? '' : student.phone.toString(),
         )),
         pw.Expanded(
             child: _textCell(
           title: 'Téléphone urgence',
           content: student.contact.phone.toString().isEmpty
-              ? 'N/A'
+              ? ''
               : student.contact.phone.toString(),
         )),
       ]),
       _textCell(
           title: 'Âge',
           content: student.dateBirth?.year == null
-              ? 'N/A'
+              ? ''
               : '${DateTime.now().difference(student.dateBirth!).inDays ~/ 365} ans'),
       _textCell(
         title: 'Nom de l\'enseignant responsable',
@@ -692,7 +696,7 @@ pw.Widget _studentInformations({
         title: 'Nom, adresse et téléphone de l\'école',
         content: '${_normalizeText(school.name).toUpperCase()}\n'
             '${_normalizeText(school.address.toString())}\n'
-            '${school.phone.toString().isEmpty ? 'N/A' : school.phone.toString()}',
+            '${school.phone.toString().isEmpty ? '' : school.phone.toString()}',
         sameLine: false,
       ),
       pw.SizedBox(height: 12),
