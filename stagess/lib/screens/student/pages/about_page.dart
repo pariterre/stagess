@@ -121,8 +121,8 @@ class AboutPageState extends State<AboutPage> {
       contact: widget.student.contact.copyWith(
         firstName: _contactFirstNameController.text,
         lastName: _contactLastNameController.text,
-        phone: widget.student.contact.phone
-            .copyWith(number: _contactPhoneController.text),
+        phone: PhoneNumber.fromString(_contactPhoneController.text,
+            id: widget.student.contact.phone.id),
         email: _contactEmailController.text,
       ),
       contactLink: _contactLinkController.text,

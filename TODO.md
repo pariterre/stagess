@@ -1,4 +1,3 @@
-Les droits d'accès sur le téléphone du contact en cas d'urgence d'un élève ne permettent pas de les changer
 UnknownErrorException: a toHes is not a function (lors du visionnment du PDF de contrat de stage) (Semble fonctionner avec chrome mais pas edge)
 Rmplir les questionnaires ne fonctionne pas si rempli Tâches à réaliser
 Le nombre de stages "utilisé" dans une autre école est quand même utilisé dans ceux 
@@ -13,7 +12,8 @@ Gestion des doublons
 WARNING: 
 Ne fonctionne pas : 1380 grande-allée, terreboone (L'adresse ne possède pas de code postal. Revert commit b94fa87daf8d025042bb696669d0babc86428b2c if we decide to not allow addresses without postal code)
 
-DONE:
+FIXED:
+Bogue dans le parsing du numéro de téléphone du contact, coté enseignant
 Autofocus lorsqu'on ouvre la recherche
 Il y a des [X] aux appostrophes dans les contrats de stages
 Retirer les N/A dans les contrats de stage
