@@ -102,24 +102,30 @@ class _SchoolBoardsListScreenState extends State<SchoolBoardsListScreen> {
       smallDrawer: MainDrawer.small,
       mediumDrawer: MainDrawer.medium,
       largeDrawer: MainDrawer.large,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (_showSearchBar)
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: const BorderRadius.vertical(
-                    bottom: Radius.circular(8),
-                  ),
+      body: Column(
+        children: [
+          if (_showSearchBar)
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(8),
                 ),
-                child: Search(controller: _searchController),
               ),
-            ..._buildTiles(authProvider, schoolBoards, filteredSchoolIds),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.5)
-          ],
-        ),
+              child: Search(controller: _searchController),
+            ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ..._buildTiles(authProvider, schoolBoards, filteredSchoolIds),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.5)
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

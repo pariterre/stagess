@@ -31,6 +31,10 @@ class _StudentsListScreenState extends State<StudentsListScreen> {
     _logger.finer('Filtering students with search text: "$textToSearch"');
 
     return students.where((student) {
+      if (!_showSearchBar) {
+        return true;
+      }
+
       if (student.fullName.toLowerCase().contains(textToSearch) ||
           student.group.toLowerCase().contains(textToSearch)) {
         return true;

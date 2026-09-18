@@ -195,7 +195,8 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen>
       final textToSearch = _searchController.text.toLowerCase().trim();
 
       // Perform the searchbar filter
-      if (enterprise.name.toLowerCase().contains(textToSearch)) {
+      if (!_withSearchBar ||
+          enterprise.name.toLowerCase().contains(textToSearch)) {
         return true;
       }
       if (enterprise.availablejobs(context).any((job) {

@@ -184,8 +184,8 @@ class _InternshipsListScreenState extends State<InternshipsListScreen> {
       smallDrawer: MainDrawer.small,
       mediumDrawer: MainDrawer.medium,
       largeDrawer: MainDrawer.large,
-      body: SingleChildScrollView(
-        child: Column(children: [
+      body: Column(
+        children: [
           if (_showSearchBar)
             Container(
               decoration: BoxDecoration(
@@ -196,10 +196,16 @@ class _InternshipsListScreenState extends State<InternshipsListScreen> {
               ),
               child: Search(controller: _searchController),
             ),
-          ..._buildTiles(
-              context, schoolBoardInternships, filteredInternshipIds),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.5),
-        ]),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(children: [
+                ..._buildTiles(
+                    context, schoolBoardInternships, filteredInternshipIds),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.5),
+              ]),
+            ),
+          ),
+        ],
       ),
     );
   }
