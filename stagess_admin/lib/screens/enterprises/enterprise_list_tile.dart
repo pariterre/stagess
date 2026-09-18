@@ -434,15 +434,28 @@ class EnterpriseListTileState extends State<EnterpriseListTile> {
             header: (ctx, isExpanded) => Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 12.0,
-                    top: 8,
-                    bottom: 8,
-                  ),
-                  child: Text(
-                    widget.enterprise.name,
-                    style: Theme.of(context).textTheme.titleMedium,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 12.0,
+                      top: 8,
+                      bottom: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          widget.enterprise.name,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Flexible(
+                          child: Text(
+                            ' - ${widget.enterprise.address}',
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 if (_isExpanded)
