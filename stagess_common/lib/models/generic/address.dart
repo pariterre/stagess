@@ -125,11 +125,7 @@ class Address extends ItemSerializable {
       postalCode == null;
   bool get isNotEmpty => !isEmpty;
 
-  bool get isValid =>
-      civicNumber != null &&
-      street != null &&
-      city != null &&
-      postalCode != null;
+  bool get isValid => civicNumber != null && street != null && city != null;
   bool get isNotValid => !isValid;
 
   @override
@@ -146,13 +142,13 @@ class Address extends ItemSerializable {
   @override
   String toString() {
     return isValid
-        ? '$civicNumber $street${apartment == null ? '' : ' #$apartment'}, $city, $postalCode'
+        ? '$civicNumber $street${apartment == null ? '' : ' #$apartment'}, $city, ${postalCode?.isEmpty ?? true ? '' : postalCode}'
         : '';
   }
 
   String toParagraph() {
     return isValid
-        ? '$civicNumber $street${apartment == null ? '' : ' #$apartment'}\n$city\n$postalCode'
+        ? '$civicNumber $street${apartment == null ? '' : ' #$apartment'}\n$city\n${postalCode?.isEmpty ?? true ? '' : postalCode}'
         : '';
   }
 
